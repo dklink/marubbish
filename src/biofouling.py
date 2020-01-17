@@ -11,7 +11,17 @@ Exploring physics in Kooi 2017
 
 import numpy as np
 import matplotlib.pyplot as plt
+import cartopy.crs as ccrs
+import xarray as xr
 
+def visualize_chlorophyll():
+    """nifty little look at the chl a dataset"""
+    ds = xr.load_dataset('../biofouling_forcing_data/A20143352014365.L3m_MO_CHL_chlor_a_4km.nc')
+    chl = ds['chlor_a']
+    ax = plt.axes(projection=ccrs.PlateCarree())
+    plt.contourf(chl.lon, chl.lat, chl, levels=np.logspace(-4, 0, 20), transform=ccrs.PlateCarree())
+    ax.coastlines()
+    plt.show()
 
 def Chl(z, i):
     chl = C_b[i] - s[i]*z + C_max[i] * np.exp(-((z-Z_max[i])/del_z[i])**2)
@@ -34,10 +44,11 @@ def plot(chl_surf_ind):
     z = np.linspace(0, 100, 1000) # m
     plt.plot(Chl(z, chl_surf_ind), z, label=chl_surf[chl_surf_ind])
     
-plt.figure()
-for i in range(len(C_b)):
-    plot(i)
-plt.gca().invert_yaxis()
-plt.ylabel('depth (m)')
-plt.xlabel('normalized chlorophyll concentration')
-plt.legend()
+def vertical_dist():
+    plt.figure()
+    for i in range(len(C_b)):
+        plot(i)
+    plt.gca().invert_yaxis()
+    plt.ylabel('depth (m)')
+    plt.xlabel('normalized chlorophyll concentration')
+    plt.legend()
