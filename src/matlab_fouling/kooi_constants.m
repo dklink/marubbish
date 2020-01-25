@@ -1,2 +1,18 @@
-%constants from Kooi 2017classdef kooi_constants  properties (Constant = true)    V_A = 2e-16; % m^-3, volume of individual algae particle    k = 1.0306e-13; % m^2 kg d^-2 K^-1, boltzmann constant    gamma = 1.7e5; % d^-1, shear rate    carbon_per_algae = 2726 * 10e-9; %mg carbon per algae cell  end  methods    function radius = r_A (obj)      radius = nthroot(3 / (4*pi) * obj.V_A, 3);  % m, radius of individual algal particle    end  end  methods (Static=true)    function chl_to_C = chl_to_carbon_ratio (T, I)      chl_to_C = 0.003 + 0.0154 * exp(0.050*T) .* exp(-0.059 * I * 1e-6);  % mg chl mg^-1 C    end    function chl_to_C_kooi = chl_to_carbon_ratio_kooi (T, I)      % T in Celsius, I in micro-Einsteins (oh god)      chl_to_C_kooi = 0.003 + 1.0154 * exp(0.050*T) .* exp(-0.059 * I * 1e-6);  % mg chl mg^-1 C      % the 2nd parameter is wrong, either she messed up, or her paper has a typo      % everybody else who cites the same paper uses 0.0154    end  end
+classdef kooi_constants
+    % kooi_constants  Constants defined in Kooi 2017
+    properties (Constant)
+        V_A = 2e-16; % volume of individual algae particle (m^-3)
+        r_A = nthroot(3 / (4*pi) * kooi_constants.V_A, 3);  % radius of individual algal particle (m)
+        gamma = 1.7e5 / constants.seconds_per_day; % shear rate (s^-1, converted from Kooi's value in d^-1)
+        carbon_per_algae = 2726 * 10e-9; % mass carbon per algal cell (mg carbon (algal cell)^-1)
+    end
+    methods (Static)
+        function chl_to_C = chl_to_carbon_ratio (T, I)
+        % chl_to_carbon_ratio  parameterization from Cloern 1995, Kooi's source
+        % T: water temperature (Celsius)
+        % I: light intensity (mol quanta m^-2 day^-2)
+        % return: mass chlorophyll-a to mass Carbon ratio (mg chl (mg C)^-1)
+            chl_to_C = 0.003 + 0.0154 * exp(0.050*T) .* exp(-0.059 * I);
+        end
+    end
 end

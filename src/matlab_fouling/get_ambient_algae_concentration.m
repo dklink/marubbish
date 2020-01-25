@@ -1,2 +1,1 @@
-function A_A = get_ambient_algae_concentration(chl, T, I)  chl_to_carbon_ratio = kooi_constants.chl_to_carbon_ratio(T, I);  A_A = chl * 1/chl_to_carbon_ratio^(-1) * 1/kooi_constants.carbon_per_algae
-endfunction
+function A_A = get_ambient_algae_concentration(chl, T, I)% get_ambient_algae_concentration: converts chl concentration to algae%   concentration using chl:C and C:algae ratios, Kooi 2017% chl: chlorophyll-a concentration (mg chl m^-3)% T: water temperature (Celsius)% I: light intensity (mol quanta m^-2 day^-2)% return: ambient algae concentration (algal cells m^-3)    chl_to_carbon_ratio = kooi_constants.chl_to_carbon_ratio(T, I);    A_A = chl * chl_to_carbon_ratio^-1 * kooi_constants.carbon_per_algae^-1;end
