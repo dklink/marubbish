@@ -12,6 +12,8 @@ classdef kooi_constants
         T_min = .2;   % min temp for growth (Celsius)
         T_max = 33.3;   % max temp for growth (Celsius)
         T_opt = 26.7;   % optimal temp for growth (Celsius)
+        Q_10 = 2; % Temperature dependence coefficient respiration (unitless)
+        R_A = .1 / constants.seconds_per_day; % Respiration rate (s^-1)
     end
     methods (Static)
         function chl_to_C = chl_to_carbon_ratio (T, I)
