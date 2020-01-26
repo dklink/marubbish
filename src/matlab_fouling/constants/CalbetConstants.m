@@ -16,12 +16,12 @@ classdef CalbetConstants
             %getAlgaeMortality returns mortality value based on region
             % lat: latitude (Degrees N)
             % returns: regional algae mortality rate (s^-1)
-            if abs(lat) < subtropical_lat_max
-                m = tropical_mortality;
-            elseif abs(lat) < temperate_lat_max
-                m = temperate_mortality;
+            if abs(lat) < CalbetConstants.subtropical_lat_max
+                m = CalbetConstants.tropical_mortality;
+            elseif abs(lat) < CalbetConstants.temperate_lat_max
+                m = CalbetConstants.temperate_mortality;
             else
-                m = polar_mortality;
+                m = CalbetConstants.polar_mortality;
             end
         end
     end
