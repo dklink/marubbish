@@ -27,27 +27,27 @@ test_rho_tot(p_yes_algae);
 disp("All Tests Passed");
 
 function test_theta_pl(particle, r_pl)
-    assert(particle.theta_pl() == 4 * pi * r_pl^2);
+    assert_equal(particle.theta_pl(), 4 * pi * r_pl^2);
 end
 
 function test_V_bf(particle, A)
-    assert(particle.V_bf() == kooi_constants.V_A * A);
+    assert_equal(particle.V_bf(), kooi_constants.V_A * A);
 end
 
 function test_V_pl(particle, r_pl)
-    assert(particle.V_pl() == 4/3 * pi * r_pl^3);
+    assert_equal(particle.V_pl(), 4/3 * pi * r_pl^3);
 end
 
 function test_V_tot(particle)
-    assert(particle.V_tot() == particle.V_pl() + particle.V_bf())
+    assert_equal(particle.V_tot(), particle.V_pl() + particle.V_bf())
 end
 
 function test_r_tot(particle)
-    assert(particle.r_tot() == nthroot(3/(4*pi) * particle.V_tot(), 3));
+    assert_equal(particle.r_tot(), nthroot(3/(4*pi) * particle.V_tot(), 3));
 end
 
 function test_t_bf(particle)
-    assert(particle.t_bf() == particle.r_tot() - particle.r_pl);
+    assert_equal(particle.t_bf(), particle.r_tot() - particle.r_pl);
 end
 
 function test_rho_tot(particle)
@@ -55,6 +55,5 @@ function test_rho_tot(particle)
     B = (particle.r_pl^3 * particle.rho_pl + ...
           ((particle.r_pl + particle.t_bf)^3 - particle.r_pl^3)*particle.rho_bf) ...
             / (particle.r_pl + particle.t_bf)^3;
- 
-    assert(abs(A-B) < 1e4*eps(min(abs(A),abs(B))));  % floating point disagreement
+    assert_equal(A, B);
 end

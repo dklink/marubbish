@@ -5,5 +5,5 @@ function respiration_rate = get_algae_respiration(particle, T)
 %   return: rate of algal respiration (# algae particles s^-1)
     Q_10 = kooi_constants.Q_10;
     R_A = kooi_constants.R_A;
-    respiration_rate = Q_10^((T-20)/10) * R_A * particle.A;
+    respiration_rate = R_A * Q_10.^((T-20)/10) .* particle.A;
 end
