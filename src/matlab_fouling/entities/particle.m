@@ -1,13 +1,13 @@
 classdef particle
     % particle  represents a spherical plastic particle with spherical algal shell
-    properties (Access = public)
+    properties
         r_pl    % radius of plastic particle (m)
         A       % # attached algae cells
         lat     % latitude (degrees north)
         lon     % longitude (degrees east)
         z       % depth, positive down (m)
     end
-    methods (Access = public)
+    methods
         function radius = r_tot (obj)
         % r_tot: the radius of the plastic/algae conglomerate (m)
             radius = obj.r_pl + obj.t_bf;
