@@ -2,8 +2,10 @@ test_sanity();
 
 disp("All Tests Passed");
 
+function 
+
 function test_sanity()
-    % not sure what to test other than just retyping everyting to catch
+    % not sure how to test other than just retyping everyting to try and catch
     % typos
     particle = Particle(.001, 940, 1e7, 0, 0, 10); % enough algae for a bit of biofilm
     T = 20;
