@@ -29,6 +29,11 @@ classdef Particle
         % t_bf: the thickness of the algal layer (m)
             biofilm_thickness = obj.r_tot - obj.r_pl;
         end
+        function diameter = D_n (obj)
+        % D_n: equivalent spherical diameter (m)
+            % particles are assumed spheres, so this is simple
+            diameter = 2*obj.r_tot();
+        end
         function radius = r_tot (obj)
         % r_tot: the radius of the plastic/algae conglomerate (m)
             radius = nthroot(3/(4*pi) * obj.V_tot(), 3);
