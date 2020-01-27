@@ -2,8 +2,6 @@ test_sanity();
 
 disp("All Tests Passed");
 
-function 
-
 function test_sanity()
     % not sure how to test other than just retyping everyting to try and catch
     % typos
