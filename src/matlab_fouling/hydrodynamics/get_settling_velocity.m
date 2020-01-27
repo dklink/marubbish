@@ -11,5 +11,5 @@ function V_s = get_settling_velocity (particle, S, T)
    g = constants.g;
    omega_star = kooi_constants.omega_star(particle, S, T);
    nu_sw = kinematic_viscosity_seawater(S, T, rho_sw);
-   V_s = - ((rho_tot - rho_sw)/rho_sw * g*omega_star*nu_sw)^(1/3); 
- end
+   V_s = -nthroot(((rho_tot - rho_sw)/rho_sw * g*omega_star*nu_sw), 3); 
+end
