@@ -7,7 +7,6 @@ classdef kooi_constants
         r_A = nthroot(3 / (4*pi) * kooi_constants.V_A, 3);  % radius of individual algal particle (m)
         gamma = 1.7e5 / constants.seconds_per_day; % shear rate (s^-1)
         carbon_per_algae = 2726 * 10e-9; % mass carbon per algal cell (mg carbon (algal cell)^-1)
-        mu_max = 1.85 / constants.seconds_per_day;  % maximum growth rate (s^-1)
         alpha = .12 / constants.seconds_per_day;    % initial growth slope (s^-1)
         I_opt = 1.75392e13 * 1e-6 / constants.seconds_per_day  % optimal light intensity for growth (mol quanta m^-2 s^-1)
         T_min = .2;   % min temp for growth (Celsius)
@@ -16,7 +15,7 @@ classdef kooi_constants
         Q_10 = 2; % Temperature dependence coefficient respiration (unitless)
         R_A = .1 / constants.seconds_per_day; % Respiration rate (s^-1)
         rho_A = 1388; % kg m^-3
-        
+        I_m = 1.2e8 * 1e-6 / constants.seconds_per_day; % Surface light intensity at noon (mol quanta m^-2 s^-1)
     end
     methods (Static)
         function chl_to_C = chl_to_carbon_ratio (T, I)

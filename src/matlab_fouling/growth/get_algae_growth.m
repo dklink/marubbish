@@ -8,7 +8,7 @@ function growth_rate = get_algae_growth(particle, T, I)
     T_max = kooi_constants.T_max;   % maximum temp for growth (Celsius)
     
     if (T > T_min) && (T < T_max)
-        mu_a = optimal_temp_algae_growth(I) * temperature_influence_on_algae_growth(T);
+        mu_a = optimal_temp_algae_growth(I) .* temperature_influence_on_algae_growth(T);
         growth_rate = mu_a * particle.A;    % (# algae cells s^-1)
     else
         growth_rate = 0;
