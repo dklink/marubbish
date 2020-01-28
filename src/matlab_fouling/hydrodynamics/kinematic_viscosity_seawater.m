@@ -8,3 +8,6 @@ function nu_sw = kinematic_viscosity_seawater(S, T, rho_sw)
     
     nu_sw = mu_sw/rho_sw;   % kinematic viscosity (m^2 s^-1)
 end
+
+% note: rho_sw is passed in directly because wherever this is needed, rho_sw
+% is most likely also needed

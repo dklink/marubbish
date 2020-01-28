@@ -1,0 +1,1 @@
+% this function is so simple it truly needs no test.

@@ -35,9 +35,10 @@ classdef kooi_constants
             if D_star < .05
                 w_s = 1.74 * 10e-4 * D_star^2;
             elseif D_star <= 5 * 10e9
-                w_s = -3.76715 + 1.92944*log(D_star) - ...
+                log_w_s = -3.76715 + 1.92944*log(D_star) - ...
                   0.09815 * log(D_star)^2 - 0.00575 * log(D_star)^3 + ...
                     0.00056*log(D_star)^4;
+                w_s = exp(log_w_s);
             else
                 error("Omega_star undefined for this particle");
             end
