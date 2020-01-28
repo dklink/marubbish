@@ -1,5 +1,5 @@
-plot_I_dependence();  % looks good!
-
+%plot_I_dependence();  % looks good!
+disp("All Tests Passed");
 function plot_I_dependence()
     I = linspace(0, 2*kooi_constants.I_m);  % mol quanta m^-2 s^-1
     growth = optimal_temp_algae_growth(I);

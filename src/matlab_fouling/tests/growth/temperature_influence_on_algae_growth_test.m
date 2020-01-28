@@ -30,7 +30,5 @@ function test_opt()
     T = linspace(kooi_constants.T_min-1, kooi_constants.T_max+.5, 1000);
     scaling_factor = temperature_influence_on_algae_growth(T); 
     [~, max_id] = max(scaling_factor);
-    disp(T(max_id));
-    disp(kooi_constants.T_opt);
     assert_equal(T(max_id), kooi_constants.T_opt, .01);
 end
