@@ -14,11 +14,9 @@ function plot_algae_dependency(min_A, max_A)
     T = 20;
     S = 35;
     V_s = zeros(1, 100);
-    d_star = zeros(1, 100);
     r_tot = zeros(1, 100);
     for i=1:100
         p = [p Particle(.001, 940, A(i), 0, 0, 10)];
-        d_star(i) = kooi_constants.dimensionless_particle_diameter(p(i), S, T);
         V_s(i) = get_settling_velocity(p(i), S, T);
         r_tot(i) = p(i).r_tot;
     end
@@ -45,7 +43,7 @@ function plot_d_star(min_A, max_A)
     r_tot = zeros(1, 100);
     for i=1:100
         p = [p Particle(.001, 940, A(i), 0, 0, 10)];
-        d_star(i) = kooi_constants.dimensionless_particle_diameter(p(i), S, T);
+        d_star(i) = dimensionless_particle_diameter(p(i), S, T);
         V_s(i) = get_settling_velocity(p(i), S, T);
         r_tot(i) = p(i).r_tot;
     end
@@ -87,7 +85,7 @@ function test_typos ()
     rho_sw = get_seawater_density(S, T, p.lat, p.lon, p.z);
     
     A = 1 * nthroot((p.rho_tot - rho_sw)/rho_sw * constants.g * ...
-        kooi_constants.omega_star(p, S, T) * kinematic_viscosity_seawater(S, T, rho_sw), 3);
+        dimensionless_settling_velocity(p, S, T) * kinematic_viscosity_seawater(S, T, rho_sw), 3);
     
     B = get_settling_velocity(p, S, T);
 

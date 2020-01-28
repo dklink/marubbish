@@ -1,4 +1,4 @@
-test_respiration_temp_dependence(p);
+test_respiration_temp_dependence();
 test_respiration_algae_count_dependence();
 
 disp("All Tests Passed");
@@ -27,7 +27,9 @@ function plot_algae_dependence()
     ylabel("Respiration Rate");
 end
 
-function test_respiration_temp_dependence(p)
+function test_respiration_temp_dependence()
+    p = Particle(NaN, NaN, 0, NaN, NaN, NaN);
+
     A = get_algae_respiration(p, 30);
     B = get_algae_respiration(p, 20);
     

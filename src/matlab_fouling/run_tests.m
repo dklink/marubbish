@@ -2,7 +2,7 @@
 
 folder  = pwd;
 disp(folder);
-filelist = dir(fullfile(folder, '**/*.*'));  %get list of files and folders in any subfolder
+filelist = dir(fullfile(folder, '**/*est.m'));  %get list of files and folders in any subfolder
 filelist = filelist(~[filelist.isdir]);  %remove folders from list
 nFile   = length(filelist);
 success = false(1, nFile);
