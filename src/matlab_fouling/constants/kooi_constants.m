@@ -18,14 +18,6 @@ classdef kooi_constants
         function radius = r_A ()
             radius = nthroot(3 / (4*pi) * kooi_constants.V_A, 3);  % radius of individual algal particle (m)
         end
-        function chl_to_C = chl_to_carbon_ratio (T, I)
-        % chl_to_carbon_ratio  parameterization from Cloern 1995, Kooi's source
-        % T: water temperature (Celsius)
-        % I: light intensity (mol quanta m^-2 s^-1)
-        % return: mass chlorophyll-a to mass Carbon ratio (mg chl (mg C)^-1)
-            % Cloern uses units (mol quanta m^-2 day^-1), hence conversion
-            chl_to_C = 0.003 + 0.0154 * exp(0.050*T) .* exp(-0.059 * I);
-        end
         function w_s = omega_star (particle, S, T)
             % omega_star: dimensionless settling velocity, kooi eq. 3
             % particle: particle for which to calculate
