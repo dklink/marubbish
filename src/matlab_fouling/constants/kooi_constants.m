@@ -8,7 +8,6 @@ classdef kooi_constants
         gamma = 1.7e5 / constants.seconds_per_day; % shear rate (s^-1)
         carbon_per_algae = 2726 * 10e-9; % mass carbon per algal cell (mg carbon (algal cell)^-1)
         alpha = .12 / constants.seconds_per_day;    % initial growth slope (s^-1)
-        I_opt = 1.75392e13 * 1e-6 / constants.seconds_per_day  % optimal light intensity for growth (mol quanta m^-2 s^-1)
         T_min = .2;   % min temp for growth (Celsius)
         T_max = 33.3;   % max temp for growth (Celsius)
         T_opt = 26.7;   % optimal temp for growth (Celsius)
