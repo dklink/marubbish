@@ -23,7 +23,7 @@ classdef Particle
         function density = rho_tot (obj)
         %rho_tot: the density of the particle/algae conglomerate (kg m^-3)
             density = (obj.rho_pl*obj.V_pl + obj.rho_bf*obj.V_bf) ...
-                            / obj.V_tot;
+                            ./ obj.V_tot;
         end
         function biofilm_thickness = t_bf (obj)
         % t_bf: the thickness of the algal layer (m)

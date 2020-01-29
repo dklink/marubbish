@@ -13,6 +13,10 @@ classdef kooi_constants
         R_A = .1 / constants.seconds_per_day; % Respiration rate (s^-1)
         rho_A = 1388; % kg m^-3
         I_m = 1.2e8 * 1e-6 / constants.seconds_per_day; % Surface light intensity at noon (mol quanta m^-2 s^-1)
+        eps_w = .2; % extinction coefficient water (m^-1)
+        eps_p = .02 / constants.liters_per_cubic_meter; % orig units: m^-1 (mg chl)^-1 L
+                                        % units after my conversion: m^2 (mg chl)^-1
+        % I don't trust the eps constants at all.  Need to do own work.
     end
     methods (Static)
         function radius = r_A ()
