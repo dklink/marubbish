@@ -15,7 +15,7 @@ function Beta_A = get_encounter_kernel_rate(particle, S, T)
     D_A = k * (T + 273.16) ./ (6*pi * mu_sw * r_A);      % diffusivity of algae cell (m^2 s^-1)
     Beta_A_brownian = 4*pi * (D_pl + D_A) * (r_tot + r_A);  % brownian motion kernel rate (m^3 s^-1)
    
-    Beta_A_settling = 1/2 * pi * r_tot^2 * V_s;  % differential settling kernel rate (m^3 s^-1)
+    Beta_A_settling = 1/2 * pi * r_tot^2 * abs(V_s);  % differential settling kernel rate (m^3 s^-1)
     
     Beta_A_shear = 1.3 * gamma * (r_tot + r_A)^3;  % advective shear kernel rate (m^3 s^-1)
     
