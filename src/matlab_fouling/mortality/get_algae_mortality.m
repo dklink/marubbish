@@ -6,6 +6,6 @@ function mortality_rate = get_algae_mortality(particle)
 %   
 %   particle: the particle in question
 %   return: rate of algae death due to grazing (# algae particles s^-1)
-m_A = CalbetConstants.getAlgaeMortality(particle.lat);  % algae mortality (s^-1)
+m_A = kooi_constants.m_A;
 mortality_rate = m_A * particle.A;
 end

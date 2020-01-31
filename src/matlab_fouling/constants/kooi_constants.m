@@ -6,6 +6,7 @@ classdef kooi_constants
         V_A = 2e-16; % volume of individual algae particle (m^3)
         gamma = 1.7e5 / constants.seconds_per_day; % shear rate (s^-1)
         carbon_per_algae = 2726 * 1e-9; % mass carbon per algal cell (mg carbon (algal cell)^-1)
+        m_A = .39 / constants.seconds_per_day;  % mortality rate (s^-1)
         T_min = .2;   % min temp for growth (Celsius)
         T_max = 33.3;   % max temp for growth (Celsius)
         T_opt = 26.7;   % optimal temp for growth (Celsius)
