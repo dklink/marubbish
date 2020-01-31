@@ -3,7 +3,7 @@ classdef kooi_constants
     properties (Constant)
         % ALGAE PROPERTIES
         
-        V_A = 2e-16; % volume of individual algae particle (m^-3)
+        V_A = 2e-16; % volume of individual algae particle (m^3)
         gamma = 1.7e5 / constants.seconds_per_day; % shear rate (s^-1)
         carbon_per_algae = 2726 * 1e-9; % mass carbon per algal cell (mg carbon (algal cell)^-1)
         T_min = .2;   % min temp for growth (Celsius)
@@ -17,6 +17,9 @@ classdef kooi_constants
         eps_p = .02 / constants.liters_per_cubic_meter; % orig units: m^-1 (mg chl)^-1 L
                                         % units after my conversion: m^2 (mg chl)^-1
         % I don't trust the eps constants at all.  Need to do own work.
+        
+        %PLASTIC PROPERTIES
+        rho_LDPE = 920;  % density of LDPE (kg m^-3)
     end
     methods (Static)
         function radius = r_A ()
