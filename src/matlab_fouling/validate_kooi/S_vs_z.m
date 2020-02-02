@@ -1,4 +1,4 @@
-function S_z = S_vs_z(z)  %eq 24
+function S_z = S_vs_z(z)  %eq 24 for North Pacific
     z = -1*z;
     z_fix_NP = -1000;
     S_fix_NP = 34.6;

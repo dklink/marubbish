@@ -45,17 +45,12 @@ for i=2:length(hours)
 end
 
 % plot just days 100-110
+%{
 A = A(hours/24 > 100);
 z = z(hours/24 > 100);
 rho = rho(hours/24 > 100);
-
 hours = hours(hours/24 > 100);
-set(0, 'DefaultLineLineWidth', 2);
-figure
-plot(hours/24, A);
-xlabel('days');
-ylabel('algae count');
-title(sprintf('radius = %.1fmm', particle_radius*1000));
+%}
 
 figure
 plot(hours/24, z);
@@ -65,12 +60,21 @@ set(gca, 'YDir','reverse');
 title(sprintf('radius = %.1fmm', particle_radius*1000));
 ylim([0, 60]);
 
+%{
+set(0, 'DefaultLineLineWidth', 2);
+figure
+plot(hours/24, A);
+xlabel('days');
+ylabel('algae count');
+title(sprintf('radius = %.1fmm', particle_radius*1000));
+
+
 figure
 plot(hours/24, rho);
 xlabel('days');
 ylabel('density (kg m^{-3})');
 title(sprintf('radius = %.1fmm', particle_radius*1000));
-
+%}
 
 % was trying to get an ode to work since kooi says she did this
 %{

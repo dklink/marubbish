@@ -1,4 +1,4 @@
-function T_z = T_vs_z(z)  % eq 22
+function T_z = T_vs_z(z)  % eq 22 for North Pacific
     T_surf_NP = 25;
     T_bot_NP = 1.5;
     p_NP = 2;
