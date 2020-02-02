@@ -7,18 +7,12 @@ NP_lat = 25.428321;   % lat and lon of spot near hawaii
 NP_lon = -151.773256; %
 
 particle_radius = .001;
-p = Particle(particle_radius, 920, 5e6, NP_lat, NP_lon, 0);
-dt = seconds_per_hour*1;
-tspan = 0:dt:1000*seconds_per_day;
+p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
 
-z0 = 0;
-[t,z] = ode23(@(t,z) odefcn(t, z, p, dt), tspan, z0);
-plot(t, z);
-
-%{
-dt_hours = 4;  % this seems to be granular enough
+dt_hours = 1;  % this needs to be like .1 * period of oscillation for good accuracy
 dt = seconds_per_hour*dt_hours;
-hours = 1:dt_hours:2400;   % 100 days, time step every dt_hours
+num_days = 110;
+hours = 1:dt_hours:num_days*24;
 A = zeros(1, length(hours));
 z = zeros(1, length(hours));
 rho = zeros(1, length(hours));
@@ -38,9 +32,8 @@ for i=2:length(hours)
     
     p.A = p.A + dAdt * dt;
     
-    % this right below is a terrible hack of physics -- I need to properly
-    % solve the diff equation to get position
-    V_s = .9*V_s + get_settling_velocity(p, S_z, T_z);
+    % not sure if this properly approximates the physics
+    V_s = get_settling_velocity(p, S_z, T_z);
     
     p.z = p.z + V_s * dt;
     if p.z < 0  % silly particle, you can't fly
@@ -51,17 +44,39 @@ for i=2:length(hours)
     A(i) = p.A;
 end
 
+% plot just days 100-110
+A = A(hours/24 > 100);
+z = z(hours/24 > 100);
+rho = rho(hours/24 > 100);
+
+hours = hours(hours/24 > 100);
+set(0, 'DefaultLineLineWidth', 2);
 figure
 plot(hours/24, A);
 xlabel('days');
 ylabel('algae count');
+title(sprintf('radius = %.1fmm', particle_radius*1000));
+
 figure
 plot(hours/24, z);
 xlabel('days');
 ylabel('depth (m)');
 set(gca, 'YDir','reverse');
+title(sprintf('radius = %.1fmm', particle_radius*1000));
+ylim([0, 60]);
+
 figure
 plot(hours/24, rho);
 xlabel('days');
 ylabel('density (kg m^{-3})');
+title(sprintf('radius = %.1fmm', particle_radius*1000));
+
+
+% was trying to get an ode to work since kooi says she did this
+%{
+tspan = 0:dt:1000*seconds_per_day;
+
+z0 = 0;
+[t,z] = ode23(@(t,z) odefcn(t, z, p, dt), tspan, z0);
+plot(t, z);
 %}
