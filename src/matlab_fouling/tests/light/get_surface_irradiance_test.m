@@ -2,7 +2,7 @@
 %plot_lon_dependence();
 %plot_map();
 %plot_seasons();
-%plot_hours();
+plot_hours();
 
 function plot_lat_dependence()
     lat = linspace(-90, 90, 100);

@@ -5,7 +5,7 @@ test_ok_temp();
 disp("All Tests Passed");
 
 %plot_temp_dependency();
-%plot_I_dependency();
+plot_I_dependency();
 
 function plot_temp_dependency()
     p = Particle(NaN, NaN, 1, NaN, NaN, NaN);
@@ -24,12 +24,13 @@ end
 function plot_I_dependency()
     p = Particle(NaN, NaN, 1, NaN, NaN, NaN);
     T = kooi_constants.T_opt;
-    I = linspace(0, kooi_constants.I_m*2, 100);
+    I = linspace(0, kooi_constants.I_m, 100);
     
-    growth = zeros(100);
+    growth = zeros(1, 100);
     for i=1:100
         growth(i) = get_algae_growth(p, T, I(i));
     end
+    figure;
     plot(I, growth);
     xlabel("I (mol quanta m^{-2} s^{-1})");
     ylabel("Growth (# cells s^{-1})");

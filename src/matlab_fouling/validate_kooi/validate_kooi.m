@@ -9,22 +9,22 @@ NP_lon = -151.773256; %
 particle_radius = .001;
 p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
 
-dt_hours = 1;  % this needs to be like .1 * period of oscillation for good accuracy
+dt_hours = .05;  % this needs to be like .1 * period of oscillation for good accuracy
 dt = seconds_per_hour*dt_hours;
 num_days = 110;
-hours = 1:dt_hours:num_days*24;
-A = zeros(1, length(hours));
-z = zeros(1, length(hours));
-rho = zeros(1, length(hours));
+t = 1:dt:num_days*seconds_per_day;
+A = zeros(1, length(t));
+z = zeros(1, length(t));
+rho = zeros(1, length(t));
 
-chl_surf = .05;
-chl_ave = .151;
+chl_surf_np = kooi_constants.chl_surf_np;
+chl_ave_np = kooi_constants.chl_ave_np;
 z(1) = p.z;
 A(1) = p.A;
 rho(1) = p.rho_tot;
 V_s = 0;
-for i=2:length(hours)
-    I_surf = I_vs_time(hours(i));
+for i=2:length(t)
+    I_surf = I_vs_time(t(i));
     T_z = T_vs_z(p.z);
     I_z = get_light_at_z(p.z, I_surf, chl_ave);
     S_z = S_vs_z(p.z);
@@ -45,35 +45,35 @@ for i=2:length(hours)
 end
 
 % plot just days 100-110
-%{
-A = A(hours/24 > 100);
-z = z(hours/24 > 100);
-rho = rho(hours/24 > 100);
-hours = hours(hours/24 > 100);
-%}
 
-figure
-plot(hours/24, z);
+A = A(t/seconds_per_day > 100);
+z = z(t/seconds_per_day > 100);
+rho = rho(t/seconds_per_day > 100);
+t = t(t/seconds_per_day > 100);
+
+
+figure;
+set(0, 'DefaultLineLineWidth', 2);
+plot(t/seconds_per_day, z);
 xlabel('days');
 ylabel('depth (m)');
 set(gca, 'YDir','reverse');
-title(sprintf('radius = %.1fmm', particle_radius*1000));
-ylim([0, 60]);
+title(sprintf('radius = %.2fmm', particle_radius*1000));
+ylim([0, 80]);
 
 %{
-set(0, 'DefaultLineLineWidth', 2);
-figure
-plot(hours/24, A);
+figure;
+plot(t/seconds_per_day, A);
 xlabel('days');
 ylabel('algae count');
-title(sprintf('radius = %.1fmm', particle_radius*1000));
+title(sprintf('radius = %.2fmm', particle_radius*1000));
+%}
 
-
-figure
-plot(hours/24, rho);
+figure;
+plot(t/seconds_per_day, rho);
 xlabel('days');
 ylabel('density (kg m^{-3})');
-title(sprintf('radius = %.1fmm', particle_radius*1000));
+title(sprintf('radius = %.2fmm', particle_radius*1000));
 %}
 
 % was trying to get an ode to work since kooi says she did this
