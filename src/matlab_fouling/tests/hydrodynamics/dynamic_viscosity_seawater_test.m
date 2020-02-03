@@ -25,7 +25,7 @@ end
 function test_sanity()
     % not much to test other than typos, so retyping from Sharqawy 2010
     % and hey, I did catch a typo!  Useful after all...
-    S = 35; % g kg^-1
+    S = 35/1000; % kg kg^-1
     T = 20; % Celsius
     
     A = 1.541 + 1.998e-2 * T - 9.52e-5*T^2;
@@ -35,7 +35,7 @@ function test_sanity()
     mu_sw = mu_w * (1 + A * S + B * S^2);
     
     A = mu_sw;
-    B = dynamic_viscosity_seawater(S, T);
-
+    B = dynamic_viscosity_seawater(S*1000, T);  % input g / kg
+    
     assert_equal(A, B);
 end
