@@ -42,14 +42,55 @@ end
 
 function fig1d()
     %kooi fig 1b
-    num_days = 10000;
+    num_days = 2000;
     dt_hours = 4;  % behavior stabilizes below 5 or so
     particle_radius = 1e-6; % m
-    [t, z, ~] = get_t_vs_z(num_days, dt_hours, particle_radius);
-
-    z = z(t/seconds_per_day > 100);
-    t = t(t/seconds_per_day > 100);
+    [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle_radius);
+    rho = meta{1};
+    coll = meta{2};
+    growth = meta{3};
+    mort = meta{4};
+    resp = meta{5};
+    
+    %z = z(t/seconds_per_day > 100);
+    %rho = rho(t/seconds_per_day > 100);
+    %t = t(t/seconds_per_day > 100);
     plot_t_vs_z(t, z, '1 \mum');
+    xlim([1000, 2000]);
+    plot_t_vs_rho(t, rho, '1 \mum');
+    xlim([1000, 2000])
+    figure; hold on;
+    t = t/seconds_per_day;
+    plot(t, coll, 'DisplayName', 'collisions');
+    plot(t, growth, 'DisplayName', 'growth');
+    plot(t, -mort, 'DisplayName', 'mortality');
+    plot(t, -resp, 'DisplayName', 'respiration');
+    plot(t, coll+growth-mort-resp, 'DisplayName', 'flux');
+    legend();
+    xlim([1000, 2000]);
+end
+
+function z_vs_growth()
+    p = Particle(NaN, NaN, 1, NaN, NaN, NaN);
+    z = linspace(0, 50);
+    I_surf = mean(I_vs_time(linspace(0, seconds_per_day)));
+    I = get_light_at_z(z, I_surf, kooi_constants.chl_ave_np);
+    T = T_vs_z(z);
+    growth = zeros(1, 100);
+    for i=1:100
+        growth(i) = get_algae_growth(p, T(i), I(i));
+    end
+    resp = get_algae_respiration(p, T);
+    mort = get_algae_mortality(p);
+    figure; hold on;
+    plot(growth, z, 'DisplayName', 'growth');
+    set(gca, 'YDir', 'reverse');
+    xlabel('Algal flux (# cells s^{-1})')
+    ylabel('depth (m)')
+    plot(-(resp+mort), z, 'DisplayName', 'death');
+    plot(growth - (resp+mort), z, 'DisplayName', 'flux');
+    xline(0, 'LineStyle', '--', 'DisplayName', 'zero');
+    legend();
 end
 
 function figS2()
@@ -57,8 +98,8 @@ function figS2()
     num_days = 120;
     dt_hours = .5;  % behavior stabilizes below 1 or so
     particle_radius = 1e-4; % m
-    [t, z, rho] = get_t_vs_z(num_days, dt_hours, particle_radius);
-
+    [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle_radius);
+    rho = meta{1};
     z = z(t/seconds_per_day > 100);
     rho = rho(t/seconds_per_day > 100);
     t = t(t/seconds_per_day > 100);
@@ -88,7 +129,7 @@ function plot_t_vs_rho(t, rho, plot_title)
     title(plot_title);
 end
 
-function [t, z, rho] = get_t_vs_z(num_days, dt_hours, particle_radius)
+function [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle_radius)
     % gets z vs t for a LDPE particle in the North Pacific
         % (for replicating kooi fig 1)
         % particle_radius in meters
@@ -103,6 +144,10 @@ function [t, z, rho] = get_t_vs_z(num_days, dt_hours, particle_radius)
     t = 1:dt:num_days*seconds_per_day;
     z = zeros(1, length(t));
     rho = zeros(1, length(t));
+    coll = zeros(1, length(t));
+    growth = zeros(1, length(t));
+    mort = zeros(1, length(t));
+    resp = zeros(1, length(t));
 
     chl_surf_np = kooi_constants.chl_surf_np;
     chl_ave_np = kooi_constants.chl_ave_np;
@@ -114,8 +159,12 @@ function [t, z, rho] = get_t_vs_z(num_days, dt_hours, particle_radius)
         I_z = get_light_at_z(p.z, I_surf, chl_ave_np);
         S_z = S_vs_z(p.z);
         chl_z = get_chl_at_z(p.z, chl_surf_np);
-        dAdt = get_algae_flux_for_particle(p, S_z, T_z, chl_z, I_z);
-
+        
+        coll(i) = get_algae_collisions(p, S_z, T_z, chl_z, I_z);
+        growth(i) = get_algae_growth(p, T_z, I_z);
+        mort(i) = get_algae_mortality(p);
+        resp(i) = get_algae_respiration(p, T_z);
+        dAdt = coll(i) + growth(i) - mort(i) - resp(i);
         p.A = p.A + dAdt * dt;
 
         % this approximates the position function
@@ -129,6 +178,7 @@ function [t, z, rho] = get_t_vs_z(num_days, dt_hours, particle_radius)
         z(i) = new_z;
         rho(i) = p.rho_tot;
     end
+    meta = {rho coll growth mort resp};
 end
 
 function sph = seconds_per_hour()
