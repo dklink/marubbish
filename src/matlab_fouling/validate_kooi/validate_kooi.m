@@ -1,7 +1,7 @@
 %fig1a();
 %fig1b();
 %fig1c();
-%fig1d();
+fig1d();  % damping strongly affected by background concentration of algae, somehow
 %figS2();
 
 function fig1a()
@@ -113,7 +113,8 @@ function [t, z, rho] = get_t_vs_z(num_days, dt_hours, particle_radius)
         T_z = T_vs_z(p.z);
         I_z = get_light_at_z(p.z, I_surf, chl_ave_np);
         S_z = S_vs_z(p.z);
-        dAdt = get_algae_flux_for_particle(p, S_z, T_z, chl_surf_np, I_z);
+        chl_z = get_chl_at_z(p.z, chl_surf_np);
+        dAdt = get_algae_flux_for_particle(p, S_z, T_z, chl_z, I_z);
 
         p.A = p.A + dAdt * dt;
 
