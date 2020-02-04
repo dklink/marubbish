@@ -1,7 +1,7 @@
 %fig1a();
 %fig1b();
 %fig1c();
-fig1d();  % damping strongly affected by background concentration of algae, somehow
+fig1d();  % damping strongly affected by collision rate!
 %figS2();
 
 function fig1a()
