@@ -1,8 +1,10 @@
 %fig1a();
 %fig1b();
 %fig1c();
-fig1d();  % damping strongly affected by collision rate!
+%fig1d();  % damping strongly affected by collision rate!
+%fig2();
 %figS2();
+%z_vs_growth();
 
 function fig1a()
     %kooi fig 1a
@@ -43,7 +45,7 @@ end
 function fig1d()
     %kooi fig 1b
     num_days = 2000;
-    dt_hours = 4;  % behavior stabilizes below 5 or so
+    dt_hours = 12;  % behavior stabilizes below 5 or so
     particle_radius = 1e-6; % m
     [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle_radius);
     rho = meta{1};
@@ -73,23 +75,62 @@ end
 function z_vs_growth()
     p = Particle(NaN, NaN, 1, NaN, NaN, NaN);
     z = linspace(0, 50);
-    I_surf = mean(I_vs_time(linspace(0, seconds_per_day)));
-    I = get_light_at_z(z, I_surf, kooi_constants.chl_ave_np);
-    T = T_vs_z(z);
-    growth = zeros(1, 100);
-    for i=1:100
-        growth(i) = get_algae_growth(p, T(i), I(i));
+    hour = 0;
+    figure;
+    while true
+        clf('reset');
+        hold on;
+
+        I_surf = I_vs_time(hour*seconds_per_hour);
+        I = get_light_at_z(z, I_surf, kooi_constants.chl_ave_np);
+        T = T_vs_z(z);
+        growth = zeros(1, 100);
+        for i=1:100
+            growth(i) = get_algae_growth(p, T(i), I(i));
+        end
+        resp = get_algae_respiration(p, T);
+        mort = get_algae_mortality(p);
+        plot(growth, z, 'DisplayName', 'growth');
+        set(gca, 'YDir', 'reverse');
+        xlabel('Algal flux (# cells s^{-1})')
+        ylabel('depth (m)')
+        plot(-(resp+mort), z, 'DisplayName', 'death');
+        plot(growth - (resp+mort), z, 'DisplayName', 'flux');
+        xline(0, 'LineStyle', '--', 'DisplayName', 'zero');
+        legend();
+        title(sprintf('hour %d', hour));
+        pause(.5);
+        hour = mod(hour + 1, 24);
     end
-    resp = get_algae_respiration(p, T);
-    mort = get_algae_mortality(p);
+    
+    
+end
+
+function fig2()
+    radii = [1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2];
+    surface_area = 4*pi*radii.^2;
+
+    %radii = sqrt(surface_area/(4*pi))
+    settling_time = zeros(1, length(radii));
+    for i=1:length(radii)
+        [t, z, ~] = get_t_vs_z(30, .05, radii(i)); % note: smaller timestep lowers settling time until .05 or so
+        settling_time(i) = t(find(z > 0, 1));
+    end
     figure; hold on;
-    plot(growth, z, 'DisplayName', 'growth');
-    set(gca, 'YDir', 'reverse');
-    xlabel('Algal flux (# cells s^{-1})')
-    ylabel('depth (m)')
-    plot(-(resp+mort), z, 'DisplayName', 'death');
-    plot(growth - (resp+mort), z, 'DisplayName', 'flux');
-    xline(0, 'LineStyle', '--', 'DisplayName', 'zero');
+    kooi_data = [1.276e-13	0.254  % from GraphClick of fig 2
+                1.287e-11	12.265
+                1.220e-9	22.196
+                1.284e-7	24.319
+                1.258e-5	24.519
+                .001        25.377];
+
+    plot(kooi_data(:,1), kooi_data(:,2), '^-.', 'DisplayName', 'kooi')
+    plot(surface_area, settling_time/seconds_per_day, '^-.', 'DisplayName', 'klink');
+    ylabel('Settling onset (days)');
+    xlabel('Surface (m^2)');
+    ylim([0, 40]);
+    set(gca,'Xscale','log');
+    title('Kooi Fig 2, LDPE');
     legend();
 end
 
@@ -165,7 +206,7 @@ function [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle_radius)
         mort(i) = get_algae_mortality(p);
         resp(i) = get_algae_respiration(p, T_z);
         dAdt = coll(i) + growth(i) - mort(i) - resp(i);
-        p.A = p.A + dAdt * dt;
+        p.A = p.A + 1.1*dAdt * dt;
 
         % this approximates the position function
         V_s = get_settling_velocity(p, S_z, T_z);

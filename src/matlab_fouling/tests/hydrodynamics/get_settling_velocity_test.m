@@ -1,6 +1,7 @@
 test_typos();
 test_no_algae_floats();
 test_much_algae_sinks();
+test_surface_constraint();
 disp("All Tests Passed");
 
 %plot_algae_dependency(1, 1e7); % shows linear behavior in "small" quantities
@@ -69,7 +70,7 @@ function test_no_algae_floats ()
 end
 
 function test_much_algae_sinks ()
-    p = Particle(.001, 940, 1e15, 0, 0, 10);
+    p = Particle(.001, 940, 1e12, 0, 0, 10);
     T = 20;
     S = 35;
     V_s = get_settling_velocity(p, S, T);
@@ -90,4 +91,12 @@ function test_typos ()
     B = get_settling_velocity(p, S, T);
 
     assert_equal(A, B);
+end
+
+function test_surface_constraint()
+    p = Particle(.001, 940, 0, 0, 0, 0);  %buoyant at surface
+    T = 20;
+    S = 35;
+    V_s = get_settling_velocity(p, S, T);
+    assert(V_s == 0);
 end

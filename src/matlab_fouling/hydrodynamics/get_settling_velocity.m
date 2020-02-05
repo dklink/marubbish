@@ -13,4 +13,8 @@ function V_s = get_settling_velocity (particle, S, T)
    nu_sw = kinematic_viscosity_seawater(S, T, rho_sw);
    V_s = nthroot(((rho_tot - rho_sw)/rho_sw * g*omega_star*nu_sw), 3); 
    % note: differs from kooi in a minus, since we use z positive down
+   
+   if (V_s < 0) && particle.z == 0  % constraint on particles at surface
+       V_s = 0;
+   end
 end
