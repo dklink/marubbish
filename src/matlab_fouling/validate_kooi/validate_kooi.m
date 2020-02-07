@@ -2,7 +2,7 @@
 %fig1b();
 %fig1c();
 %fig1d();  % damping strongly affected by collision rate!
-%fig2();
+fig2(PlasticType.PP);
 %figS2();
 %z_vs_growth();
 
@@ -11,7 +11,8 @@ function fig1a()
     num_days = 110;
     dt_hours = .1;  % behavior stabilizes below .2 or so (.7 mimics kooi exactly)
     particle_radius = 1e-3; % m
-    [t, z, ~] = get_t_vs_z(num_days, dt_hours, particle_radius);
+    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
+    [t, z, ~] = get_t_vs_z(num_days, dt_hours, p);
 
     z = z(t/seconds_per_day > 100);
     t = t(t/seconds_per_day > 100);
@@ -23,7 +24,8 @@ function fig1b()
     num_days = 150;
     dt_hours = 1;  % behavior stabilizes below 1 or so
     particle_radius = 1e-4; % m
-    [t, z, ~] = get_t_vs_z(num_days, dt_hours, particle_radius);
+    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
+    [t, z, ~] = get_t_vs_z(num_days, dt_hours, p);
 
     z = z(t/seconds_per_day > 100);
     t = t(t/seconds_per_day > 100);
@@ -35,7 +37,8 @@ function fig1c()
     num_days = 1000;
     dt_hours = 1;  % behavior stabilizes below 2 or so
     particle_radius = 1e-5; % m
-    [t, z, ~] = get_t_vs_z(num_days, dt_hours, particle_radius);
+    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
+    [t, z, ~] = get_t_vs_z(num_days, dt_hours, p);
 
     z = z(t/seconds_per_day > 100);
     t = t(t/seconds_per_day > 100);
@@ -47,7 +50,8 @@ function fig1d()
     num_days = 2000;
     dt_hours = 12;  % behavior stabilizes below 5 or so
     particle_radius = 1e-6; % m
-    [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle_radius);
+    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
+    [t, z, meta] = get_t_vs_z(num_days, dt_hours, p);
     rho = meta{1};
     coll = meta{2};
     growth = meta{3};
@@ -106,31 +110,58 @@ function z_vs_growth()
     
 end
 
-function fig2()
+function fig2(plastic_type)
     radii = [1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2];
     surface_area = 4*pi*radii.^2;
-
-    %radii = sqrt(surface_area/(4*pi))
-    settling_time = zeros(1, length(radii));
-    for i=1:length(radii)
-        [t, z, ~] = get_t_vs_z(30, .05, radii(i)); % note: smaller timestep lowers settling time until .05 or so
-        settling_time(i) = t(find(z > 0, 1));
-    end
-    figure; hold on;
-    kooi_data = [1.276e-13	0.254  % from GraphClick of fig 2
+    
+    if plastic_type == PlasticType.LDPE
+        density = kooi_constants.rho_LDPE;
+        kooi_data = [1.276e-13	0.254  % from GraphClick of fig 2
                 1.287e-11	12.265
                 1.220e-9	22.196
                 1.284e-7	24.319
                 1.258e-5	24.519
                 .001        25.377];
+        linestyle = '-.^';
+    elseif plastic_type == PlasticType.HDPE
+        density = kooi_constants.rho_HDPE;
+        kooi_data = [1.258e-13	0.248
+                    1.257e-11	11.379
+                    1.250e-9	21.493
+                    1.237e-7	24.238
+                    1.257e-5	24.350
+                    0.001	24.471];
+        linestyle = '-.d';
+    elseif plastic_type == PlasticType.PP
+        density = kooi_constants.rho_PP;
+        kooi_data = [1.272e-13	0.291
+                    1.247e-11	13.406
+                    1.242e-9	23.459
+                    1.215e-7	26.310
+                    1.217e-5	26.360
+                    0.001	26.448];
+        linestyle = '-.s';
+    else
+        error("unrecognized plastic type");
+    end
 
-    plot(kooi_data(:,1), kooi_data(:,2), '^-.', 'DisplayName', 'kooi')
-    plot(surface_area, settling_time/seconds_per_day, '^-.', 'DisplayName', 'klink');
+    
+    settling_time = zeros(1, length(radii));
+    for i=1:length(radii)
+        p = Particle(radii(i), density, 0, NP_lat, NP_lon, 0);
+        [t, z, ~] = get_t_vs_z(50, .05, p); % note: smaller timestep lowers settling time until .05 or so
+        settling_time(i) = t(find(z > 0, 1));
+    end
+    
+    hold on;
+    
+    plot(kooi_data(:,1), kooi_data(:,2), linestyle,'MarkerSize', 8, 'DisplayName', 'kooi')
+    plot(surface_area, settling_time/seconds_per_day, linestyle, 'MarkerSize', 8, 'DisplayName', 'klink');
     ylabel('Settling onset (days)');
     xlabel('Surface (m^2)');
     ylim([0, 40]);
     set(gca,'Xscale','log');
-    title('Kooi Fig 2, LDPE');
+    title(sprintf('Kooi Fig 2, %s', plastic_type));
     legend();
 end
 
@@ -139,7 +170,8 @@ function figS2()
     num_days = 120;
     dt_hours = .5;  % behavior stabilizes below 1 or so
     particle_radius = 1e-4; % m
-    [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle_radius);
+    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
+    [t, z, meta] = get_t_vs_z(num_days, dt_hours, p);
     rho = meta{1};
     z = z(t/seconds_per_day > 100);
     rho = rho(t/seconds_per_day > 100);
@@ -170,16 +202,14 @@ function plot_t_vs_rho(t, rho, plot_title)
     title(plot_title);
 end
 
-function [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle_radius)
-    % gets z vs t for a LDPE particle in the North Pacific
+function [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle)
+    % gets z vs t for a particle in the North Pacific
+    % num_days is length of simulation (days)
+    % dt_hours is timestep (hours)
         % (for replicating kooi fig 1)
-        % particle_radius in meters
     % returns: [t, z] ([seconds, meters])
 
-    NP_lat = 25.428321;   % lat and lon of spot near hawaii
-    NP_lon = -151.773256; %
-
-    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
+    p = particle;
 
     dt = seconds_per_hour*dt_hours;
     t = 1:dt:num_days*seconds_per_day;
@@ -228,4 +258,12 @@ end
 
 function spd = seconds_per_day()
     spd = seconds_per_hour*24;
+end
+
+function lat = NP_lat()
+    lat = 25.428321;   % lat of spot near hawaii
+end
+
+function lon = NP_lon()
+    lon = -151.773256; % lon of spot near hawaii
 end

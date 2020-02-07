@@ -22,7 +22,9 @@ classdef kooi_constants
         % I don't trust the eps constants at all.  Need to do own work.
         
         %PLASTIC PROPERTIES
-        rho_LDPE = 920;  % density of LDPE (kg m^-3)
+        rho_LDPE = 920;  % density of low-density polyethylene (kg m^-3)
+        rho_HDPE = 940;  % density of high-density polyethylene (kg m^-3)
+        rho_PP = 840;   % density of polypropylene (kg m^-3)
     end
     methods (Static)
         function radius = r_A ()

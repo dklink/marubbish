@@ -1,7 +1,7 @@
 classdef constants
     % universal physical constants and general definitions
     properties (Constant)
-        k = 1.380649e-23;  % boltzmann constant (m^2 kg s^-2 K^-1)
+        k = 1.0306e-13 / constants.seconds_per_day^2;  % boltzmann constant (m^2 kg s^-2 K^-1)
         seconds_per_day = 86400;  % (s day^-1)
         liters_per_cubic_meter = 1000;
         g = 9.81; % standard gravity (m s^-2)
