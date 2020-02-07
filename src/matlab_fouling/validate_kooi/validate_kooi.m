@@ -1,8 +1,8 @@
 %fig1a();
 %fig1b();
 %fig1c();
-%fig1d();  % damping strongly affected by collision rate!
-fig2(PlasticType.PP);
+fig1d();  % damping strongly affected by collision rate!
+%fig2(PlasticType.PP);
 %figS2();
 %z_vs_growth();
 

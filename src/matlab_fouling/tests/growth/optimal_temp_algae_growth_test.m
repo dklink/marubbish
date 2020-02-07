@@ -1,4 +1,4 @@
-%plot_I_dependence();  % looks good!
+plot_I_dependence();  % linear if using kooi's light units, proper looking if using Bernard's units
 disp("All Tests Passed");
 function plot_I_dependence()
     I = linspace(0, 2*kooi_constants.I_m);  % mol quanta m^-2 s^-1
