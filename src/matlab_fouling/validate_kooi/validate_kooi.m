@@ -48,7 +48,7 @@ end
 function fig1d()
     %kooi fig 1b
     num_days = 2000;
-    dt_hours = 12;  % behavior stabilizes below 5 or so
+    dt_hours = 1;  % behavior stabilizes below 1 or so
     particle_radius = 1e-6; % m
     p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
     [t, z, meta] = get_t_vs_z(num_days, dt_hours, p);
@@ -241,7 +241,7 @@ function [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle)
         % this approximates the position function
         V_s = get_settling_velocity(p, S_z, T_z);
         new_z = p.z + V_s * dt;
-        if new_z < 0  % silly particle, you can't fly
+        if new_z < 0  % constrain to surface
             new_z = 0;
         end
         

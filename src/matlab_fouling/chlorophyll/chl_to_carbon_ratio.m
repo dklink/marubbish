@@ -2,7 +2,7 @@ function chl_to_C = chl_to_carbon_ratio (T, I)
 % chl_to_carbon_ratio  parameterization from Cloern 1995, Kooi's source
 % T: water temperature (Celsius)
 % I: light intensity (mol quanta m^-2 s^-1)
-% return: mass chlorophyll-a to mass Carbon ratio (mg chl (mg C)^-1)
+% return: mass chlorophyll-a to mass Carbon ratio (kg chl (kg C)^-1)
     % Cloern uses units (mol quanta m^-2 day^-1), hence conversion
     mu_prime = 1; %from N / (K_N + N), Cloern eq. 14, when 
                     % N (limiting nutrient concentration) is very

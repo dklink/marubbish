@@ -1,7 +1,7 @@
 function I = I_vs_time(second_of_day)
     % kooi's parameterization of daylight intensity
-    hour_of_day = second_of_day/3600;
-    I = kooi_constants.I_m * sin((2*pi) * (hour_of_day-6)/24);
+    t = second_of_day/constants.seconds_per_day;
+    I = kooi_constants.I_m * sin((2*pi) * t);
     I(I < 0) = 0;
 end
 

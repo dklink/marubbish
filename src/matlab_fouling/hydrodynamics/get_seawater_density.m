@@ -15,9 +15,12 @@ function rho_sw = get_seawater_density(S, T, lat, lon, z)
     b_1 = 8.020E2;
     b_2 = -2.001;
     b_3 = 1.677E-2;
-    b_4 = -3.060e-5;  % kooi's typo: 2.261E-3, clearly used a_4 accidentally
-    b_5 = -1.613e-5;  % also typo: -4.657E-5, clearly used a_5 accidentally
-                    % typos don't affect near-surface behavior, so doesn't affect results
+    b_4 = -3.060e-5;  % correct value
+    %b_4 = 2.261e-5; % kooi's value
+    b_5 = -1.613e-5;  % correct value
+    %b_5 = -4.657e-5; %kooi's value
+                    % typos cause profile which is .03 kg m^-3 more dense
+                    % at surface, too small to cause problems
     rho_sw = (a_1 + a_2*T + a_3*T.^2 + a_4*T.^3 + a_5*T.^4) + ...
               (b_1*S + b_2*S.*T + b_3*S.*T.^2 + b_4*S.*T.^3 + b_5*S.^2.*T.^2);
 end

@@ -6,7 +6,8 @@ plot_z_dependence();
 
 function plot_z_dependence()
     z = linspace(0, 50);
-    chl_ave = .05;  % varying this basically has no effect
+    %chl_ave = .05;  % varying this basically has no effect
+    chl_ave = kooi_constants.chl_ave_np;
     I_surf = kooi_constants.I_m;
     
     I_z = get_light_at_z(z, I_surf, chl_ave);

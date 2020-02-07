@@ -1,9 +1,9 @@
 function chl_z = get_chl_at_z_mixed(z, chl_surf, z_eu)
 %get_chl_at_z Simplified vertical profile, taken from Uitz 2006 mixed profile
 %   z: depth (m)
-%   chl_surf: concentration of chl_a at surface (mg m^-3)
+%   chl_surf: concentration of chl_a at surface (kg m^-3)
 %   z_eu: euphotic depth (m)
-%   return: chlorophyll-a concentration at depth z (mg m^-3)
+%   return: chlorophyll-a concentration at depth z (kg m^-3)
 
     if z < z_eu
         chl_z = chl_surf;
