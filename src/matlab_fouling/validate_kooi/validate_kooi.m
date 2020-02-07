@@ -1,8 +1,8 @@
 %fig1a();
 %fig1b();
 %fig1c();
-fig1d();  % damping strongly affected by collision rate!
-%fig2(PlasticType.PP);
+%fig1d();  % damping strongly affected by collision rate!
+fig2(PlasticType.HDPE);
 %figS2();
 %z_vs_growth();
 
@@ -110,10 +110,7 @@ function z_vs_growth()
     
 end
 
-function fig2(plastic_type)
-    radii = [1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2];
-    surface_area = 4*pi*radii.^2;
-    
+function fig2(plastic_type)    
     if plastic_type == PlasticType.LDPE
         density = kooi_constants.rho_LDPE;
         kooi_data = [1.276e-13	0.254  % from GraphClick of fig 2
@@ -145,7 +142,8 @@ function fig2(plastic_type)
         error("unrecognized plastic type");
     end
 
-    
+    surface_area = kooi_data(:, 1);
+    radii = sqrt(surface_area / (4 * pi));
     settling_time = zeros(1, length(radii));
     for i=1:length(radii)
         p = Particle(radii(i), density, 0, NP_lat, NP_lon, 0);
