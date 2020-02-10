@@ -1,13 +1,14 @@
-%fig1a();
-%fig1b();
-%fig1c();
-%fig1d();  % damping strongly affected by collision rate!
-%fig2(PlasticType.HDPE);
-fig3(PlasticType.HDPE);
+%[t, z, meta] = fig1a();
+%[t, z, meta] = fig1b();
+%[t, z, meta] = fig1c();
+%[t, z, meta] = fig1d();  % damping strongly affected by collision rate!
+%fig2(PlasticType.PP);
+fig3(PlasticType.PP);
+%plot_dominant_frequency();
 %figS2();
 %z_vs_growth();
 
-function fig1a()
+function [t, z, meta] = fig1a()
     %kooi fig 1a
     num_days = 110;
     dt_hours = .1;  % behavior stabilizes below .2 or so
@@ -17,38 +18,44 @@ function fig1a()
 
     z = z(t/seconds_per_day > 100);
     t = t(t/seconds_per_day > 100);
-    plot_t_vs_z(t, z, '1 mm');
+    plot_t_vs_z(t, z, '1 mm');  
+    
+    plot_freq_spectrum(t, z, dt_hours);
 end
 
-function fig1b()
+function [t, z, meta] = fig1b()
     %kooi fig 1b
     num_days = 150;
     dt_hours = 1;  % behavior stabilizes below 1 or so
     particle_radius = 1e-4; % m
     p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
-    [t, z, ~] = get_t_vs_z(num_days, dt_hours, p);
+    [t, z, meta] = get_t_vs_z(num_days, dt_hours, p);
 
     z = z(t/seconds_per_day > 100);
     t = t(t/seconds_per_day > 100);
     plot_t_vs_z(t, z, '0.1 mm');
+    
+    plot_freq_spectrum(t, z, dt_hours);
 end
 
-function fig1c()
+function [t, z, meta] = fig1c()
     %kooi fig 1c
     num_days = 1000;
     dt_hours = 1;  % behavior stabilizes below 2 or so
     particle_radius = 1e-5; % m
     p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
-    [t, z, ~] = get_t_vs_z(num_days, dt_hours, p);
+    [t, z, meta] = get_t_vs_z(num_days, dt_hours, p);
 
     z = z(t/seconds_per_day > 100);
     t = t(t/seconds_per_day > 100);
     plot_t_vs_z(t, z, '10 \mum');
+    
+    plot_freq_spectrum(t, z, dt_hours);
 end
 
-function fig1d()
+function [t, z, meta] = fig1d()
     %kooi fig 1b
-    num_days = 2000;
+    num_days = 10000;
     dt_hours = 1;  % behavior stabilizes below 1 or so
     particle_radius = 1e-6; % m
     p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
@@ -75,6 +82,8 @@ function fig1d()
     plot(t, coll+growth-mort-resp, 'DisplayName', 'flux');
     legend();
     xlim([1000, 2000]);
+    
+    plot_freq_spectrum(t, z, dt_hours);
 end
 
 function z_vs_growth()
@@ -224,7 +233,31 @@ function fig3(plastic_type)
     legend();
 end
 
+function plot_dominant_frequency(plastic_type)    
+    % compares average depth in Kooi fig 1 to mine
+    T_kooi = [2811.922-2619.892, 225.812-135.379, 115.107-112.092, 101.400-100.395]; % period, days
 
+    functions = {fig1d, fig1c, fig1b, fig1a};
+    radii = [1e-6, 1e-5, 1e-4, 1e-3];
+    dominant_f = zeros(1, length(radii));
+    for i=1:4
+        [t, z, meta] = functions{i}();
+        dt_hours = (t(2)-t(1))/seconds_per_hour;
+        [f, P1] = get_freq_spectrum(t, z, dt_hours);
+        [max_P1, max_i] = max(P1(P1 < 1000));
+        dominant_f(i) = f(max_i);
+    end
+    T_klink = 1./dominant_f;
+    
+    figure;hold on;
+    plot(radii, T_kooi, 'MarkerSize', 8, 'DisplayName', 'kooi')
+    plot(radii, T_klink, 'MarkerSize', 8, 'DisplayName', 'klink');
+    ylabel('Dominant frequency');
+    xlabel('Platic Radius (m)');
+    set(gca,'Xscale','log');
+    set(gca, 'Yscale', 'log');
+    legend();
+end
 
 function figS2()
     %kooi fig S2
@@ -252,6 +285,28 @@ function plot_t_vs_z(t, z, plot_title)
     set(gca, 'YDir','reverse');
     title(plot_title);
     ylim([0, 80]);
+end
+
+function [f, P1] = get_freq_spectrum(t, z, dt_hours)
+    % f in day^-1
+    figure;
+    Fs = 1/(dt_hours/24);  % sampling frequency (day^-1)
+    L = length(t);
+    
+    Z = fft(z);
+    P2 = abs(Z/L);
+    P1 = P2(1:L/2+1);
+    P1(2:end-1) = 2*P1(2:end-1);
+    
+    f = Fs*(0:(L/2))/L;
+end
+
+function plot_freq_spectrum(t, z, dt_hours)
+    [f, P1] = get_freq_spectrum(t, z, dt_hours);
+    plot(1./f, P1);
+    title('Single-Sided Amplitude Spectrum of z(t)');
+    xlabel('T (days/cycle)');
+    ylabel('|P1(f)|');
 end
 
 function plot_t_vs_rho(t, rho, plot_title)

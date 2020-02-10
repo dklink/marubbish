@@ -3,6 +3,18 @@ test_always_positive();
 
 disp("All Tests Passed");
 
+plot_radius_dependence();
+plot_density_dependence();
+
+function plot_radius_dependence()
+    r = linspace(1e-9, 1e-1);
+    
+end
+
+function plot_density_dependence()
+
+end
+
 function test_typos()
     % retype from Kooi eq. 4
     p = Particle(.001, 940, 1e7, 0, 0, 10);
@@ -10,7 +22,7 @@ function test_typos()
     S = 35;
     
     rho_sw = get_seawater_density(S, T, p.lat, p.lon, p.z);
-    nu_sw = kinematic_viscosity_seawater(S, T, rho_sw);
+    nu_sw = kinematic_viscosity_seawater(S, T);
     
     A = (p.rho_tot - rho_sw)*constants.g*p.D_n^3 / (rho_sw*nu_sw^2);
     B = dimensionless_particle_diameter(p, S, T);

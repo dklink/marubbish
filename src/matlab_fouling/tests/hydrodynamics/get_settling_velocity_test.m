@@ -86,7 +86,7 @@ function test_typos ()
     rho_sw = get_seawater_density(S, T, p.lat, p.lon, p.z);
     
     A = 1 * nthroot((p.rho_tot - rho_sw)/rho_sw * constants.g * ...
-        dimensionless_settling_velocity(p, S, T) * kinematic_viscosity_seawater(S, T, rho_sw), 3);
+        dimensionless_settling_velocity(p, S, T) * kinematic_viscosity_seawater(S, T), 3);
     
     B = get_settling_velocity(p, S, T);
 
