@@ -3,7 +3,7 @@
 %fig1c();
 %fig1d();  % damping strongly affected by collision rate!
 %fig2(PlasticType.HDPE);
-fig3(PlasticType.LDPE);
+fig3(PlasticType.HDPE);
 %figS2();
 %z_vs_growth();
 

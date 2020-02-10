@@ -5,6 +5,9 @@ function omega_star = dimensionless_settling_velocity (particle, S, T)
     % T: temperature at particle (Celsius)
     % return: dimensionless settling velocity (unitless)
     D_star = dimensionless_particle_diameter(particle, S, T);
+    omega_star = 1.74e-4 * D_star^2;
+    
+    %{
     if D_star < .05
         omega_star = 1.74e-4 * D_star^2;
     elseif D_star <= 5e9
@@ -15,4 +18,9 @@ function omega_star = dimensionless_settling_velocity (particle, S, T)
     else
         error("Omega_star undefined; particle too big");
     end
+    %}
 end
+
+% it appears Kooi doesn't follow the paper she references quite right;
+% she only uses the small-particle approximation of omega_star
+% perhaps due to an error in her conditioning on D_star magnitude.
