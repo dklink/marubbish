@@ -2,17 +2,18 @@
 %fig1b();
 %fig1c();
 %fig1d();  % damping strongly affected by collision rate!
-fig2(PlasticType.HDPE);
+%fig2(PlasticType.HDPE);
+fig3(PlasticType.LDPE);
 %figS2();
 %z_vs_growth();
 
 function fig1a()
     %kooi fig 1a
     num_days = 110;
-    dt_hours = .1;  % behavior stabilizes below .2 or so (.7 mimics kooi exactly)
+    dt_hours = .1;  % behavior stabilizes below .2 or so
     particle_radius = 1e-3; % m
     p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
-    [t, z, ~] = get_t_vs_z(num_days, dt_hours, p);
+    [t, z, meta] = get_t_vs_z(num_days, dt_hours, p);
 
     z = z(t/seconds_per_day > 100);
     t = t(t/seconds_per_day > 100);
@@ -163,6 +164,68 @@ function fig2(plastic_type)
     legend();
 end
 
+
+function fig3(plastic_type)    
+    if plastic_type == PlasticType.LDPE
+        density = kooi_constants.rho_LDPE;
+        kooi_data = [7.870e-6	4.353  % graphclick of fig 3
+                    1.438e-5	8.975
+                    1.117e-4	92.800
+                    0.001	1007.943
+                    0.011	3268.793];
+
+
+        marker = '^';
+    elseif plastic_type == PlasticType.HDPE
+        density = kooi_constants.rho_HDPE;
+        kooi_data = [7.586e-6	4.171
+                    1.445e-5	8.863
+                    1.104e-4	83.257
+                    0.001	922.636
+                    0.011	4159.560];
+        marker = 'd';
+    elseif plastic_type == PlasticType.PP
+        density = kooi_constants.rho_PP;
+        kooi_data = [7.861e-6	4.396
+                    1.555e-5	10.204
+                    1.187e-4	129.708
+                    0.001	1096.100
+                    0.012	7690.197];
+        marker = 's';
+    else
+        error("unrecognized plastic type");
+    end
+
+    radii = [1e-6, 1e-5, 1e-4, 1e-3, 1e-2];
+    settling_velocity = zeros(1, length(radii));
+    total_radius = zeros(1, length(radii));
+    for i=1:length(radii)
+        p = Particle(radii(i), density, 0, NP_lat, NP_lon, 0);
+        [t, z, meta] = get_t_vs_z(50, .05, p); % note: smaller timestep lowers settling time until .05 or so
+        r_tot = meta{6};
+        v_s = meta{7};
+        [v_max, i_max] = max(v_s);
+        settling_velocity(i) = v_max;
+        total_radius(i) = r_tot(i_max);
+    end
+    
+    hold on;
+    plot(kooi_data(:,1)*1e3, kooi_data(:,2), ...
+        strcat('-.', marker),'MarkerSize', 8, 'DisplayName', 'kooi')
+    plot(total_radius*1e3, settling_velocity*constants.seconds_per_day, ...
+        strcat('-', marker), 'MarkerSize', 8, 'DisplayName', 'klink');
+    set(gcf,'Position',[0, 83, 448, 687]); % match proportions of kooi's plot
+    ylabel('Settling Velocity (m d^{-1})');
+    xlabel('Total Radius (mm)');
+    set(gca,'Xscale','log');
+    set(gca, 'Yscale', 'log');
+    ylim([1, 10000]);
+    title(sprintf('Kooi Fig 3, %s', plastic_type));
+    legend();
+end
+
+
+
 function figS2()
     %kooi fig S2
     num_days = 120;
@@ -217,6 +280,8 @@ function [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle)
     growth = zeros(1, length(t));
     mort = zeros(1, length(t));
     resp = zeros(1, length(t));
+    r_tot = zeros(1, length(t));
+    settling_v = zeros(1, length(t));
 
     chl_surf_np = kooi_constants.chl_surf_np;
     chl_ave_np = kooi_constants.chl_ave_np;
@@ -246,8 +311,10 @@ function [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle)
         p.z = new_z;
         z(i) = new_z;
         rho(i) = p.rho_tot;
+        r_tot(i) = p.r_tot;
+        settling_v(i) = V_s;
     end
-    meta = {rho coll growth mort resp};
+    meta = {rho coll growth mort resp r_tot settling_v};
 end
 
 function sph = seconds_per_hour()
