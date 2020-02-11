@@ -10,5 +10,5 @@ function D_star = dimensionless_particle_diameter (particle, S, T)
     D_n = particle.D_n;  % equivalent spherical particle diameter
     nu_sw = kinematic_viscosity_seawater(S, T); % m^2 s^-1
 
-    D_star = abs(rho_tot - rho_sw) * g * D_n^3 / (rho_sw * nu_sw^2);
+    D_star = abs(rho_tot - rho_sw) * g .* D_n.^3 / (rho_sw * nu_sw^2);
 end

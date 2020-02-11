@@ -208,16 +208,21 @@ function fig3(plastic_type)
     radii = [1e-6, 1e-5, 1e-4, 1e-3, 1e-2];
     settling_velocity = zeros(1, length(radii));
     total_radius = zeros(1, length(radii));
+    algae = zeros(1, length(radii));
+    rho_max = zeros(1, length(radii));
     for i=1:length(radii)
-        p = Particle(radii(i), density, 0, NP_lat, NP_lon, 0);
+        p = Particle(radii(i), density, 0, constants.NP_lat, constants.NP_lon, 0);
         [t, z, meta] = get_t_vs_z(50, .05, p); % note: smaller timestep lowers settling time until .05 or so
         r_tot = meta{6};
         v_s = meta{7};
+        A = meta{8};
+        rho = meta{1};
         [v_max, i_max] = max(v_s);
         settling_velocity(i) = v_max;
         total_radius(i) = r_tot(i_max);
+        algae(i) = A(i_max);
+        rho_max(i) = rho(i_max);
     end
-    
     hold on;
     plot(kooi_data(:,1)*1e3, kooi_data(:,2), ...
         strcat('-.', marker),'MarkerSize', 8, 'DisplayName', 'kooi')
@@ -226,11 +231,19 @@ function fig3(plastic_type)
     set(gcf,'Position',[0, 83, 448, 687]); % match proportions of kooi's plot
     ylabel('Settling Velocity (m d^{-1})');
     xlabel('Total Radius (mm)');
-    set(gca,'Xscale','log');
-    set(gca, 'Yscale', 'log');
+    %set(gca,'Xscale','log');
+    %set(gca, 'Yscale', 'log');
     ylim([1, 10000]);
     title(sprintf('Kooi Fig 3, %s', plastic_type));
     legend();
+    
+    % why is this correct??!?
+    p = Particle(total_radius, rho_max, 0, 0, 0, 0);
+    disp(rho_max);
+    S = 25;  % this makes the chart match.   THIS! Why??
+    T = 25;
+    plot(total_radius*1e3, get_settling_velocity(p, S, T_vs_z(0))*constants.seconds_per_day, ...
+        'DisplayName', 'S=25');
 end
 
 function plot_dominant_frequency(plastic_type)    
@@ -316,74 +329,4 @@ function plot_t_vs_rho(t, rho, plot_title)
     xlabel('days');
     ylabel('densty (kg m^{-3})');
     title(plot_title);
-end
-
-function [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle)
-    % gets z vs t for a particle in the North Pacific
-    % num_days is length of simulation (days)
-    % dt_hours is timestep (hours)
-        % (for replicating kooi fig 1)
-    % returns: [t, z] ([seconds, meters])
-
-    p = particle;
-
-    dt = seconds_per_hour*dt_hours;
-    t = 1:dt:num_days*seconds_per_day;
-    z = zeros(1, length(t));
-    rho = zeros(1, length(t));
-    coll = zeros(1, length(t));
-    growth = zeros(1, length(t));
-    mort = zeros(1, length(t));
-    resp = zeros(1, length(t));
-    r_tot = zeros(1, length(t));
-    settling_v = zeros(1, length(t));
-
-    chl_surf_np = kooi_constants.chl_surf_np;
-    chl_ave_np = kooi_constants.chl_ave_np;
-    z(1) = p.z;
-    rho(1) = p.rho_tot;
-    for i=2:length(t)
-        I_surf = I_vs_time(t(i));
-        T_z = T_vs_z(p.z);
-        I_z = get_light_at_z(p.z, I_surf, chl_ave_np);
-        S_z = S_vs_z(p.z);
-        chl_z = get_chl_at_z(p.z, chl_surf_np);
-        
-        coll(i) = get_algae_collisions(p, S_z, T_z, chl_z, I_z);
-        growth(i) = get_algae_growth(p, T_z, I_z);
-        mort(i) = get_algae_mortality(p);
-        resp(i) = get_algae_respiration(p, T_z);
-        dAdt = coll(i) + growth(i) - mort(i) - resp(i);
-        p.A = p.A + 1.1*dAdt * dt;
-
-        % this approximates the position function
-        V_s = get_settling_velocity(p, S_z, T_z);
-        new_z = p.z + V_s * dt;
-        if new_z < 0  % constrain to surface
-            new_z = 0;
-        end
-        
-        p.z = new_z;
-        z(i) = new_z;
-        rho(i) = p.rho_tot;
-        r_tot(i) = p.r_tot;
-        settling_v(i) = V_s;
-    end
-    meta = {rho coll growth mort resp r_tot settling_v};
-end
-
-function sph = seconds_per_hour()
-    sph = 3600;
-end
-
-function spd = seconds_per_day()
-    spd = seconds_per_hour*24;
-end
-
-function lat = NP_lat()
-    lat = 25.428321;   % lat of spot near hawaii
-end
-
-function lon = NP_lon()
-    lon = -151.773256; % lon of spot near hawaii
 end

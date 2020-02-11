@@ -22,7 +22,7 @@ classdef Particle
         end
         function density = rho_tot (obj)
         %rho_tot: the density of the particle/algae conglomerate (kg m^-3)
-            density = (obj.rho_pl*obj.V_pl + obj.rho_bf*obj.V_bf) ...
+            density = (obj.rho_pl.*obj.V_pl + obj.rho_bf.*obj.V_bf) ...
                             ./ obj.V_tot;
         end
         function biofilm_thickness = t_bf (obj)
@@ -44,7 +44,7 @@ classdef Particle
         end
         function volume = V_pl (obj)
         % V_pl: the volume of the plastic particle (m^3)
-            volume = 4/3 * pi  * obj.r_pl^3;
+            volume = 4/3 * pi  * obj.r_pl.^3;
         end
         function volume = V_bf (obj)
         % V_bf: the volume of the algal layer (m^3)
