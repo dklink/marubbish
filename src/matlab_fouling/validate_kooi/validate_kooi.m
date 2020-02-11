@@ -3,7 +3,7 @@
 %[t, z, meta] = fig1c();
 %[t, z, meta] = fig1d();  % damping strongly affected by collision rate!
 %fig2(PlasticType.HDPE);
-fig3(PlasticType.PP);
+%fig3(PlasticType.PP);
 %plot_dominant_frequency();
 %figS2();
 %z_vs_growth();
