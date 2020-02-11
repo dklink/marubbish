@@ -2,22 +2,24 @@
 %[t, z, meta] = fig1b();
 %[t, z, meta] = fig1c();
 %[t, z, meta] = fig1d();  % damping strongly affected by collision rate!
-%fig2(PlasticType.PP);
+%fig2(PlasticType.HDPE);
 fig3(PlasticType.PP);
 %plot_dominant_frequency();
 %figS2();
 %z_vs_growth();
+%plot_period();
+
 
 function [t, z, meta] = fig1a()
     %kooi fig 1a
     num_days = 110;
     dt_hours = .1;  % behavior stabilizes below .2 or so
     particle_radius = 1e-3; % m
-    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
+    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, constants.NP_lat, constants.NP_lon, 0);
     [t, z, meta] = get_t_vs_z(num_days, dt_hours, p);
 
-    z = z(t/seconds_per_day > 100);
-    t = t(t/seconds_per_day > 100);
+    z = z(t/constants.seconds_per_day > 100);
+    t = t(t/constants.seconds_per_day > 100);
     plot_t_vs_z(t, z, '1 mm');  
     
     plot_freq_spectrum(t, z, dt_hours);
@@ -28,11 +30,11 @@ function [t, z, meta] = fig1b()
     num_days = 150;
     dt_hours = 1;  % behavior stabilizes below 1 or so
     particle_radius = 1e-4; % m
-    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
+    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, constants.NP_lat, constants.NP_lon, 0);
     [t, z, meta] = get_t_vs_z(num_days, dt_hours, p);
 
-    z = z(t/seconds_per_day > 100);
-    t = t(t/seconds_per_day > 100);
+    z = z(t/constants.seconds_per_day > 100);
+    t = t(t/constants.seconds_per_day > 100);
     plot_t_vs_z(t, z, '0.1 mm');
     
     plot_freq_spectrum(t, z, dt_hours);
@@ -43,11 +45,11 @@ function [t, z, meta] = fig1c()
     num_days = 1000;
     dt_hours = 1;  % behavior stabilizes below 2 or so
     particle_radius = 1e-5; % m
-    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
+    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, constants.NP_lat, constants.NP_lon, 0);
     [t, z, meta] = get_t_vs_z(num_days, dt_hours, p);
 
-    z = z(t/seconds_per_day > 100);
-    t = t(t/seconds_per_day > 100);
+    z = z(t/constants.seconds_per_day > 100);
+    t = t(t/constants.seconds_per_day > 100);
     plot_t_vs_z(t, z, '10 \mum');
     
     plot_freq_spectrum(t, z, dt_hours);
@@ -58,23 +60,23 @@ function [t, z, meta] = fig1d()
     num_days = 10000;
     dt_hours = 1;  % behavior stabilizes below 1 or so
     particle_radius = 1e-6; % m
-    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
+    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, constants.NP_lat, constants.NP_lon, 0);
     [t, z, meta] = get_t_vs_z(num_days, dt_hours, p);
+    
+    %z = z(t/constants.seconds_per_day > 100);
+    %rho = rho(t/constants.seconds_per_day > 100);
+    %t = t(t/constants.seconds_per_day > 100);
+    plot_t_vs_z(t, z, '1 \mum');
+    %{
     rho = meta{1};
     coll = meta{2};
     growth = meta{3};
     mort = meta{4};
     resp = meta{5};
-    
-    %z = z(t/seconds_per_day > 100);
-    %rho = rho(t/seconds_per_day > 100);
-    %t = t(t/seconds_per_day > 100);
-    plot_t_vs_z(t, z, '1 \mum');
-    xlim([1000, 2000]);
     plot_t_vs_rho(t, rho, '1 \mum');
     xlim([1000, 2000])
     figure; hold on;
-    t = t/seconds_per_day;
+    t = t/constants.seconds_per_day;
     plot(t, coll, 'DisplayName', 'collisions');
     plot(t, growth, 'DisplayName', 'growth');
     plot(t, -mort, 'DisplayName', 'mortality');
@@ -82,7 +84,7 @@ function [t, z, meta] = fig1d()
     plot(t, coll+growth-mort-resp, 'DisplayName', 'flux');
     legend();
     xlim([1000, 2000]);
-    
+    %}
     plot_freq_spectrum(t, z, dt_hours);
 end
 
@@ -156,7 +158,7 @@ function fig2(plastic_type)
     radii = sqrt(surface_area / (4 * pi));
     settling_time = zeros(1, length(radii));
     for i=1:length(radii)
-        p = Particle(radii(i), density, 0, NP_lat, NP_lon, 0);
+        p = Particle(radii(i), density, 0, constants.NP_lat, constants.NP_lon, 0);
         [t, z, ~] = get_t_vs_z(50, .05, p); % note: smaller timestep lowers settling time until .05 or so
         settling_time(i) = t(find(z > 0, 1));
     end
@@ -164,7 +166,7 @@ function fig2(plastic_type)
     hold on;
     
     plot(kooi_data(:,1), kooi_data(:,2), linestyle,'MarkerSize', 8, 'DisplayName', 'kooi')
-    plot(surface_area, settling_time/seconds_per_day, linestyle, 'MarkerSize', 8, 'DisplayName', 'klink');
+    plot(surface_area, settling_time/constants.seconds_per_day, linestyle, 'MarkerSize', 8, 'DisplayName', 'klink');
     ylabel('Settling onset (days)');
     xlabel('Surface (m^2)');
     ylim([0, 40]);
@@ -172,7 +174,6 @@ function fig2(plastic_type)
     title(sprintf('Kooi Fig 2, %s', plastic_type));
     legend();
 end
-
 
 function fig3(plastic_type)    
     if plastic_type == PlasticType.LDPE
@@ -205,7 +206,7 @@ function fig3(plastic_type)
         error("unrecognized plastic type");
     end
 
-    radii = [1e-6, 1e-5, 1e-4, 1e-3, 1e-2];
+    radii = [1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2];
     settling_velocity = zeros(1, length(radii));
     total_radius = zeros(1, length(radii));
     algae = zeros(1, length(radii));
@@ -231,13 +232,13 @@ function fig3(plastic_type)
     set(gcf,'Position',[0, 83, 448, 687]); % match proportions of kooi's plot
     ylabel('Settling Velocity (m d^{-1})');
     xlabel('Total Radius (mm)');
-    %set(gca,'Xscale','log');
-    %set(gca, 'Yscale', 'log');
+    set(gca,'Xscale','log');
+    set(gca, 'Yscale', 'log');
     ylim([1, 10000]);
     title(sprintf('Kooi Fig 3, %s', plastic_type));
     legend();
     
-    % why is this correct??!?
+    % much closer to correct
     p = Particle(total_radius, rho_max, 0, 0, 0, 0);
     disp(rho_max);
     S = 25;  % this makes the chart match.   THIS! Why??
@@ -246,26 +247,25 @@ function fig3(plastic_type)
         'DisplayName', 'S=25');
 end
 
-function plot_dominant_frequency(plastic_type)    
-    % compares average depth in Kooi fig 1 to mine
-    T_kooi = [2811.922-2619.892, 225.812-135.379, 115.107-112.092, 101.400-100.395]; % period, days
-
-    functions = {fig1d, fig1c, fig1b, fig1a};
+function plot_period()    
+    % compares fig 1 periods, kooi and mine
+    T_kooi = [4950/29, 450/23, 50/18, 10/10]; % period, days, from counting peaks in fig 1
+    T_klink = zeros(1, length(T_kooi));
+    functions = {@fig1d, @fig1c, @fig1b, @fig1a};
     radii = [1e-6, 1e-5, 1e-4, 1e-3];
-    dominant_f = zeros(1, length(radii));
     for i=1:4
-        [t, z, meta] = functions{i}();
-        dt_hours = (t(2)-t(1))/seconds_per_hour;
+        [t, z, ~] = functions{i}();
+        dt_hours = (t(2)-t(1))/constants.seconds_per_hour;
         [f, P1] = get_freq_spectrum(t, z, dt_hours);
-        [max_P1, max_i] = max(P1(P1 < 1000));
-        dominant_f(i) = f(max_i);
+        T = 1./f;
+        [~, max_i] = max(P1);
+        T_klink(i) = T(max_i);
     end
-    T_klink = 1./dominant_f;
-    
-    figure;hold on;
+    %close all;
+    figure; hold on;
     plot(radii, T_kooi, 'MarkerSize', 8, 'DisplayName', 'kooi')
     plot(radii, T_klink, 'MarkerSize', 8, 'DisplayName', 'klink');
-    ylabel('Dominant frequency');
+    ylabel('Period of main oscillation (days)');
     xlabel('Platic Radius (m)');
     set(gca,'Xscale','log');
     set(gca, 'Yscale', 'log');
@@ -280,9 +280,9 @@ function figS2()
     p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
     [t, z, meta] = get_t_vs_z(num_days, dt_hours, p);
     rho = meta{1};
-    z = z(t/seconds_per_day > 100);
-    rho = rho(t/seconds_per_day > 100);
-    t = t(t/seconds_per_day > 100);
+    z = z(t/constants.seconds_per_day > 100);
+    rho = rho(t/constants.seconds_per_day > 100);
+    t = t(t/constants.seconds_per_day > 100);
     plot_t_vs_z(t, z, '0.1 mm');
     plot_t_vs_rho(t, rho, '0.1 mm');
     ylim([920, 1060]);
@@ -292,7 +292,7 @@ end
 function plot_t_vs_z(t, z, plot_title)
     figure;
     set(0, 'DefaultLineLineWidth', 2);
-    plot(t/seconds_per_day, z);
+    plot(t/constants.seconds_per_day, z);
     xlabel('days');
     ylabel('depth (m)');
     set(gca, 'YDir','reverse');
@@ -302,11 +302,10 @@ end
 
 function [f, P1] = get_freq_spectrum(t, z, dt_hours)
     % f in day^-1
-    figure;
     Fs = 1/(dt_hours/24);  % sampling frequency (day^-1)
     L = length(t);
     
-    Z = fft(z);
+    Z = fft(z-mean(z));
     P2 = abs(Z/L);
     P1 = P2(1:L/2+1);
     P1(2:end-1) = 2*P1(2:end-1);
@@ -316,16 +315,19 @@ end
 
 function plot_freq_spectrum(t, z, dt_hours)
     [f, P1] = get_freq_spectrum(t, z, dt_hours);
-    plot(1./f, P1);
+    figure; plot(1./f, P1);
     title('Single-Sided Amplitude Spectrum of z(t)');
     xlabel('T (days/cycle)');
     ylabel('|P1(f)|');
+    [~, max_i] = max(P1);
+    T = 1./f;
+    fprintf("Main period: %.0f", T(max_i));
 end
 
 function plot_t_vs_rho(t, rho, plot_title)
     figure;
     set(0, 'DefaultLineLineWidth', 2);
-    plot(t/seconds_per_day, rho);
+    plot(t/constants.seconds_per_day, rho);
     xlabel('days');
     ylabel('densty (kg m^{-3})');
     title(plot_title);

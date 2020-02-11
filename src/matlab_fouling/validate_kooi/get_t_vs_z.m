@@ -3,7 +3,7 @@ function [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle)
     % num_days is length of simulation (days)
     % dt_hours is timestep (hours)
         % (for replicating kooi fig 1)
-    % returns: [t, z] ([seconds, meters])
+    % returns: [t, z, meta] ([seconds, meters])
 
     p = particle;
 
@@ -30,11 +30,7 @@ function [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle)
         S_z = S_vs_z(p.z);
         chl_z = get_chl_at_z(p.z, chl_surf_np);
         
-        coll(i) = get_algae_collisions(p, S_z, T_z, chl_z, I_z);
-        growth(i) = get_algae_growth(p, T_z, I_z);
-        mort(i) = get_algae_mortality(p);
-        resp(i) = get_algae_respiration(p, T_z);
-        dAdt = coll(i) + growth(i) - mort(i) - resp(i);
+        dAdt = get_algae_flux_for_particle(p, S_z, T_z, chl_z, I_z);
         p.A = p.A + dAdt * dt;
 
         % this approximates the position function
@@ -47,6 +43,10 @@ function [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle)
         p.z = new_z;
         z(i) = new_z;
         rho(i) = p.rho_tot;
+        coll(i) = get_algae_collisions(p, S_z, T_z, chl_z, I_z);
+        growth(i) = get_algae_growth(p, T_z, I_z);
+        mort(i) = get_algae_mortality(p);
+        resp(i) = get_algae_respiration(p, T_z);
         r_tot(i) = p.r_tot;
         settling_v(i) = V_s;
         A(i) = p.A;

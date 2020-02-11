@@ -11,7 +11,8 @@ disp("All Tests Passed");
                                     %(kooi_constants.omega_star)
 %kowalski_fig2();
 %kowalski_fig3();
-kowalski_fig4();
+%kowalski_fig4();  %matches 1mm & above perfectly
+%kaiser_fig2();  %matches 1microm-.25mm scale pretty perfectly
 
 function plot_algae_dependency(min_A, max_A)
     A = logspace(log10(min_A), log10(max_A), 100);
@@ -207,4 +208,28 @@ function kowalski_fig4()
         title(sprintf("rho %d kg/m^3", rho(i)));
     end
     
+end
+
+function kaiser_fig2()
+% figure 2 from kaiser 2019.  Check match with line labeled "Dietrich"
+    T = 20; % C, from kaiser table 1
+    ESD = linspace(1, 250);   %microm
+    r = .5e-6*ESD; %m
+    S = [0, 15, 36];   %g/kg
+    polymers = {'PA', 'PET', 'PMMA'};
+    rho = [1140, 1390, 1190];  % kg m^-3, of above polymers
+    figure('Renderer', 'painters', 'Position', [300, 0, 800, 800]);
+    for i=1:length(S)
+        for j=1:length(rho)
+            subplot(3, 3, 3*(i-1) + j);
+            p = Particle(r, rho(j), 0, 0, 0, 0);
+            V_s = get_settling_velocity(p, S(i), T);
+            plot(ESD, V_s*constants.seconds_per_day, 'LineStyle', '--', 'Color', '#C2C5CC');
+            xlabel("ESD [\mum]");
+            ylabel("Sinking Velocity V_s [md^{-1}]");
+            xlim([0, 250]);
+            ylim([0, 125]);
+            title(sprintf("polymer: %s, S=%d", polymers{j}, S(i)));
+        end
+    end
 end
