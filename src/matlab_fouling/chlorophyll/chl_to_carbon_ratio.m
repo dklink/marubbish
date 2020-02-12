@@ -9,7 +9,7 @@ function chl_to_C = chl_to_carbon_ratio (T, I)
                     % large (i.e. no nutrient limitation, which Kooi assumes)
                     
     I_cloern_units = I * constants.seconds_per_day;  % mol quanta m^-2 day^-1, as Cloern uses
-    chl_to_C = 0.003 + 1.0154 * exp(0.050*T) .* exp(-0.059 * I_cloern_units) * mu_prime;
+    chl_to_C = 0.003 + 0.0154 * exp(0.050*T) .* exp(-0.059 * I_cloern_units) * mu_prime;
                       %0.0154 is correct, kooi's paper says 1.0154.
-                      %impacts settling time and damping
+                      %impacts settling time and damping quite a bit
 end

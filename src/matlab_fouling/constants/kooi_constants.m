@@ -7,7 +7,7 @@ classdef kooi_constants
         chl_surf_np = .05 * 1e-6;  % kg m^-3
         chl_ave_np = .151 * 1e-6;  % kg m^-3
         gamma = 1.7e5 / constants.seconds_per_day; % shear rate (s^-1)
-        carbon_per_algae = 2726 * 1e-15; % mass carbon per algal cell (kg carbon (algal cell)^-1)
+        carbon_per_algae = 2726 * 1e-9 * 1e-6; % mass carbon per algal cell (kg carbon (algal cell)^-1)
         m_A = .39 / constants.seconds_per_day;  % mortality rate (s^-1)
         T_min = .2;   % min temp for growth (Celsius)
         T_max = 33.3;   % max temp for growth (Celsius)
