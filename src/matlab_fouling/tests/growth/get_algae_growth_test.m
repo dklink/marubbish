@@ -5,7 +5,27 @@ test_ok_temp();
 disp("All Tests Passed");
 
 %plot_temp_dependency();
-plot_I_dependency();
+%plot_I_dependency();
+bernard_fig4();  % not a true confirmation, but reassuring
+
+function bernard_fig4()
+    % compare to bernard 2012 fig 4
+    p = Particle(NaN, NaN, 1, NaN, NaN, NaN);
+    I = 1e-6*[34, 44, 54, 61, 72, 80]; % mol quanta m^-2 s^-1
+    T = linspace(kooi_constants.T_min, kooi_constants.T_max);
+    figure; hold on;
+    max_growth = max(get_algae_growth(p, T, I(6)));
+    for i=1:length(I)
+        growth = get_algae_growth(p, T, I(i));
+        norm_growth = growth/max_growth;
+        plot(T, norm_growth, 'DisplayName', sprintf('I: %d', I(i)*1e6));
+    end
+    legend;
+    xlabel('Temperature (C)');
+    ylabel('Normalized Growth rate (day^{-1})');
+    xlim([-5, 45]);
+    ylim([0, 2]);
+end
 
 function plot_temp_dependency()
     p = Particle(NaN, NaN, 1, NaN, NaN, NaN);

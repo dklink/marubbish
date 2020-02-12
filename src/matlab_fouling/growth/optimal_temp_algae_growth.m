@@ -7,7 +7,6 @@ function growth_rate = optimal_temp_algae_growth(I)
     mu_max = kooi_constants.mu_max; % maximum growth rate (s^-1)
     alpha = kooi_constants.alpha;   % initial slope (s^-1)
     I_opt = kooi_constants.I_opt;   % optimal light intensity (mol quanta m^-2 s^-1)
-
     % Convert to Bernard's light units for the (sadly unit dependent) parameterization: micro mol quanta m^-2 s^-1
     I_opt = I_opt * 1e6;
     I = I * 1e6;

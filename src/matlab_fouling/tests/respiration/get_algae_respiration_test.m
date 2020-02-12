@@ -1,9 +1,9 @@
-test_respiration_temp_dependence();
-test_respiration_algae_count_dependence();
+test_respiration_temp_dependence();  % doubles every 10 deg C
+test_respiration_algae_count_dependence();  % linear with A
 
 disp("All Tests Passed");
 
-%plot_temp_dependence();
+plot_temp_dependence();
 %plot_algae_dependence();
 
 function plot_temp_dependence()

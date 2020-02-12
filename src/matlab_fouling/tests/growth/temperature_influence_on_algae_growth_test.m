@@ -4,7 +4,8 @@ test_opt();
 test_equation();
 disp("All Tests Passed");
 
-plot_T_dependency();  % looks good
+%plot_T_dependency();  % looks good
+%bernard_fig1(); % perfect
 
 function plot_T_dependency()
     T = linspace(kooi_constants.T_min-1, kooi_constants.T_max+.5, 100);
@@ -15,6 +16,25 @@ function plot_T_dependency()
     xline(kooi_constants.T_max, '-', 'T_{max}');
     xline(kooi_constants.T_min, '-', 'T_{min}');
     xline(kooi_constants.T_opt, '-', 'T_{opt}');
+end
+
+function bernard_fig1()
+    % from Bernard 2012
+    mu_opt = 1.65;
+    T_min = -7.3;
+    T_opt = 20.1;
+    T_max = 29.8;
+    T = linspace(T_min, T_max, 100);
+    scaling_factor = temperature_influence_on_algae_growth(T, T_min, T_max, T_opt); 
+    plot(T, scaling_factor*mu_opt);
+    xlabel("T (Celsius)");
+    ylabel("Growth rate (day^-1)");
+    xline(T_max, '--', 'T_{max}');
+    xline(T_min, '--', 'T_{min}');
+    xline(T_opt, '--', 'T_{opt}');
+    yline(mu_opt, '--', '\mu_{opt}');
+    xlim([-10, 35]);
+    ylim([0, 2.5]);
 end
 
 function test_min()

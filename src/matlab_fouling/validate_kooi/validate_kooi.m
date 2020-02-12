@@ -1,7 +1,7 @@
 %[t, z, meta] = fig1a();
 %[t, z, meta] = fig1b();
 %[t, z, meta] = fig1c();
-%[t, z, meta] = fig1d();  % damping strongly affected by collision rate!
+[t, z, meta] = fig1d();  % damping strongly affected by collision rate!
 %fig2(PlasticType.HDPE);
 %fig3(PlasticType.PP);
 %plot_dominant_frequency();
@@ -10,10 +10,12 @@
 %plot_period();
 
 
+% notes on timesteps:
+
 function [t, z, meta] = fig1a()
     %kooi fig 1a
     num_days = 110;
-    dt_hours = .1;  % behavior stabilizes below .2 or so
+    dt_hours = .5;  % behavior stabilizes below .5 or so
     particle_radius = 1e-3; % m
     p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, constants.NP_lat, constants.NP_lon, 0);
     [t, z, meta] = get_t_vs_z(num_days, dt_hours, p);
@@ -25,10 +27,14 @@ function [t, z, meta] = fig1a()
     plot_freq_spectrum(t, z, dt_hours);
 end
 
+% appears really small timesteps necessary to resolve exact detail,
+% Timestep doesn't have to be quite as small to correctly resolve
+% depth.
+% Timestep doesn't seem to affect frequency much.
 function [t, z, meta] = fig1b()
     %kooi fig 1b
     num_days = 150;
-    dt_hours = 1;  % behavior stabilizes below 1 or so
+    dt_hours = 1;  % behavior stabilizes below .05 or so
     particle_radius = 1e-4; % m
     p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, constants.NP_lat, constants.NP_lon, 0);
     [t, z, meta] = get_t_vs_z(num_days, dt_hours, p);
@@ -40,9 +46,12 @@ function [t, z, meta] = fig1b()
     plot_freq_spectrum(t, z, dt_hours);
 end
 
+% timestep doesn't affect frequency much
+% timestep doesn't affect depth much
+% timestep does affect settling time
 function [t, z, meta] = fig1c()
     %kooi fig 1c
-    num_days = 1000;
+    num_days = 200;
     dt_hours = 1;  % behavior stabilizes below 2 or so
     particle_radius = 1e-5; % m
     p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, constants.NP_lat, constants.NP_lon, 0);
@@ -57,7 +66,7 @@ end
 
 function [t, z, meta] = fig1d()
     %kooi fig 1b
-    num_days = 10000;
+    num_days = 2000;
     dt_hours = 1;  % behavior stabilizes below 1 or so
     particle_radius = 1e-6; % m
     p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, constants.NP_lat, constants.NP_lon, 0);
