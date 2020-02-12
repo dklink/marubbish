@@ -23,6 +23,8 @@ classdef kooi_constants
         rho_LDPE = 920;  % density of low-density polyethylene (kg m^-3)
         rho_HDPE = 940;  % density of high-density polyethylene (kg m^-3)
         rho_PP = 840;   % density of polypropylene (kg m^-3)
+        rho_PS = 1050; % density of Polystyrene (kg m^-3)
+        rho_PVC = 1380; % density of Polyvinylchloride
         
         %VERTICAL PROFILES
         %Temperature

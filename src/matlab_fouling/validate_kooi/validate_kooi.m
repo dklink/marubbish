@@ -1,11 +1,12 @@
 %[t, z, meta] = fig1a();
 %[t, z, meta] = fig1b();
 %[t, z, meta] = fig1c();
-[t, z, meta] = fig1d();  % damping strongly affected by collision rate!
+%[t, z, meta] = fig1d();  % damping strongly affected by collision rate!
 %fig2(PlasticType.HDPE);
 %fig3(PlasticType.PP);
 %plot_dominant_frequency();
 %figS2();
+figS3();
 %z_vs_growth();
 %plot_period();
 
@@ -296,6 +297,53 @@ function figS2()
     plot_t_vs_rho(t, rho, '0.1 mm');
     ylim([920, 1060]);
     yline(mean(get_seawater_density(S_vs_z(z), T_vs_z(z), 0, 0, 0)));
+end
+
+function figS3()
+    %kooi fig S2 from supporting information
+    % this figure starts the particles at 1000m and goes to
+    % ocean_floor+1000, basically because of assumption that growth in
+    % euphotic layer will have basically 0 impact on the total settling
+    % time, considering the vanishingly small time spent there, and the
+    % quick death of all algae once deeper than ~25m
+    rho = [kooi_constants.rho_PS, kooi_constants.rho_PVC];
+    names = {'PS', 'PVC'};
+    radii = [1e-6, 10e-6, .1e-3, 1e-3, 10e-3]; % m
+    ocean_floor = 4000; % m
+    num_days = [1e7, 1e5, 1e4, 1e2, 1e1];
+    starting_depth = 1000;
+    figure; hold on;
+    for i=1:length(rho)
+        settling_time = zeros(1, length(radii));
+        for j=1:length(radii)
+            p = Particle(radii(j), rho(i), 0, constants.NP_lat, constants.NP_lon, starting_depth);
+            [t, z, meta] = get_t_vs_z(num_days(j), num_days(j)/1000, p);
+            fprintf('%d of %d calculated\n', length(radii)*(i-1) + j, length(rho)*length(radii));
+            settling_time(j) = t(find(z > (ocean_floor+starting_depth), 1));
+        end
+        plot(radii, settling_time/constants.seconds_per_day, 'DisplayName', names{i});
+        set(gca, 'Xscale', 'log');
+        set(gca, 'Yscale', 'log');
+    end      
+
+    kooi_PS = [1e-6	1.618e6
+                1e-5	16183.940
+                1e-4	162.776
+                0.001       1.632
+                0.010       0.016]; % graphclick fig S3
+    kooi_PVC =  [1e-6	1.025e5
+                1e-5	1020.505
+                1e-4	10.097
+                .001	0.112
+                0.010       0.001];
+    plot(kooi_PS(:, 1), kooi_PS(:, 2), '--^','MarkerSize', 8, 'DisplayName', 'kooi PS');
+    plot(kooi_PVC(:, 1), kooi_PVC(:, 2), '--d','MarkerSize', 8, 'DisplayName', 'kooi PVC');
+    
+    xlabel('radius (m)');
+    ylabel('time to reach 4000m (days)');
+    title('fig S3');
+    legend();
+
 end
 
 function plot_t_vs_z(t, z, plot_title)
