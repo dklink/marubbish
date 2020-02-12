@@ -1,9 +1,8 @@
 function [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle)
-    % gets z vs t for a particle in the North Pacific
+    % simulate vertical movement for a particle in the North Pacific
     % num_days is length of simulation (days)
     % dt_hours is timestep (hours)
-        % (for replicating kooi fig 1)
-    % returns: [t, z, meta] ([seconds, meters])
+    % returns: [t, z, meta] ([seconds, meters, see meta definition below])
 
     p = particle;
 
@@ -52,5 +51,7 @@ function [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle)
         A(i) = p.A;
 
     end
+    
+    % collect and return many properties in timeseries for investigations
     meta = {rho coll growth mort resp r_tot settling_v A};
 end

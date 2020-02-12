@@ -10,7 +10,7 @@
 %plot_period();
 
 
-% notes on timesteps:
+% notes on timesteps
 
 function [t, z, meta] = fig1a()
     %kooi fig 1a
