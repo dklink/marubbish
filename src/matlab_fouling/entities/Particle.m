@@ -52,7 +52,7 @@ classdef Particle
         end
         function surface_area = theta_pl (obj)
         % theta_pl: the surface area of the plastic particle (m^2)
-            surface_area = 4 * pi * obj.r_pl^2;
+            surface_area = 4 * pi * obj.r_pl.^2;
         end
     end
 end

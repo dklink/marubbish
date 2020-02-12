@@ -13,7 +13,7 @@ classdef kooi_constants
         T_max = 33.3;   % max temp for growth (Celsius)
         T_opt = 26.7;   % optimal temp for growth (Celsius)
         Q_10 = 2; % Temperature dependence coefficient respiration (unitless)
-        R_A = .1 / constants.seconds_per_day; % Respiration rate (s^-1)
+        Resp_A = .1 / constants.seconds_per_day; % Respiration rate (s^-1)
         rho_A = 1388; % density of algae (kg m^-3)
         I_m = 1.2e8 * 1e-6 / constants.seconds_per_day; % Surface light intensity at noon (mol quanta m^-2 s^-1)
         mu_max = 1.85 / constants.seconds_per_day; %  max growth rate algae (s^-1)
