@@ -1,12 +1,12 @@
-%[t, z, meta] = fig1a();
+[t, z, meta] = fig1a();
 %[t, z, meta] = fig1b();
 %[t, z, meta] = fig1c();
 %[t, z, meta] = fig1d();  % damping strongly affected by collision rate!
-%fig2(PlasticType.HDPE);
+%fig2(PlasticType.PP);
 %fig3(PlasticType.PP);
 %plot_dominant_frequency();
 %figS2();
-figS3();
+%figS3();
 %z_vs_growth();
 %plot_period();
 
@@ -25,7 +25,7 @@ function [t, z, meta] = fig1a()
     t = t(t/constants.seconds_per_day > 100);
     plot_t_vs_z(t, z, '1 mm');  
     
-    plot_freq_spectrum(t, z, dt_hours);
+    %plot_freq_spectrum(t, z, dt_hours);
 end
 
 % appears really small timesteps necessary to resolve exact detail,
@@ -44,7 +44,7 @@ function [t, z, meta] = fig1b()
     t = t(t/constants.seconds_per_day > 100);
     plot_t_vs_z(t, z, '0.1 mm');
     
-    plot_freq_spectrum(t, z, dt_hours);
+    %plot_freq_spectrum(t, z, dt_hours);
 end
 
 % timestep doesn't affect frequency much
@@ -52,7 +52,7 @@ end
 % timestep does affect settling time
 function [t, z, meta] = fig1c()
     %kooi fig 1c
-    num_days = 200;
+    num_days = 1000;
     dt_hours = 1;  % behavior stabilizes below 2 or so
     particle_radius = 1e-5; % m
     p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, constants.NP_lat, constants.NP_lon, 0);
@@ -62,12 +62,12 @@ function [t, z, meta] = fig1c()
     t = t(t/constants.seconds_per_day > 100);
     plot_t_vs_z(t, z, '10 \mum');
     
-    plot_freq_spectrum(t, z, dt_hours);
+    %plot_freq_spectrum(t, z, dt_hours);
 end
 
 function [t, z, meta] = fig1d()
     %kooi fig 1b
-    num_days = 2000;
+    num_days = 10000;
     dt_hours = 1;  % behavior stabilizes below 1 or so
     particle_radius = 1e-6; % m
     p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, constants.NP_lat, constants.NP_lon, 0);
@@ -95,7 +95,7 @@ function [t, z, meta] = fig1d()
     legend();
     xlim([1000, 2000]);
     %}
-    plot_freq_spectrum(t, z, dt_hours);
+    %plot_freq_spectrum(t, z, dt_hours);
 end
 
 function z_vs_growth()
@@ -287,16 +287,31 @@ function figS2()
     num_days = 120;
     dt_hours = .5;  % behavior stabilizes below 1 or so
     particle_radius = 1e-4; % m
-    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, NP_lat, NP_lon, 0);
+    p = Particle(particle_radius, kooi_constants.rho_LDPE, 0, constants.NP_lat, constants.NP_lon, 0);
     [t, z, meta] = get_t_vs_z(num_days, dt_hours, p);
     rho = meta{1};
     z = z(t/constants.seconds_per_day > 100);
     rho = rho(t/constants.seconds_per_day > 100);
     t = t(t/constants.seconds_per_day > 100);
-    plot_t_vs_z(t, z, '0.1 mm');
-    plot_t_vs_rho(t, rho, '0.1 mm');
+    
+    figure('Renderer', 'painters', 'Position', [100 0 500 800]);
+    subplot(2, 1, 1);
+    plot(t/constants.seconds_per_day, z);
+    set(gca, 'YDir','reverse');
+    ylabel('depth (m');
+    ylim([-2, 60]);
+    [zmin, min_i] = min(-z);
+    xline(t(min_i)/constants.seconds_per_day, '--');
+    
+    subplot(2, 1, 2);
+    plot(t/constants.seconds_per_day, rho);
     ylim([920, 1060]);
     yline(mean(get_seawater_density(S_vs_z(z), T_vs_z(z), 0, 0, 0)));
+    xlabel('time (days)');
+    ylabel('density (kg m^{-3})');
+    xline(t(min_i)/constants.seconds_per_day, '--');
+    
+    sgtitle('Figure S2');
 end
 
 function figS3()
@@ -378,7 +393,7 @@ function plot_freq_spectrum(t, z, dt_hours)
     ylabel('|P1(f)|');
     [~, max_i] = max(P1);
     T = 1./f;
-    fprintf("Main period: %.0f", T(max_i));
+    %fprintf("Main period: %.0f", T(max_i));
 end
 
 function plot_t_vs_rho(t, rho, plot_title)
