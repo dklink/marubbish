@@ -16,6 +16,26 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import numpy as np
 
+def world_temp():
+    ds = xr.load_dataset('/Users/dklink/data_science/trashtracker/utils/get hycom/nc/global_2015_02_01_00_temp_sal_3d.nc')
+    surf = ds.sel(depth=0).isel(time=0)
+    plot_on_map(surf, 'water_temp')
+    
+    # vertical profile
+    atlantic = ds.sel(lon=360-25, method='nearest').isel(time=0)
+    plot_section(atlantic)
+    #pacific = ds.sel(lon=360-)
+
+def world_salinity():
+    ds = xr.load_dataset('/Users/dklink/data_science/trashtracker/utils/get hycom/nc/global_2015_02_01_00_temp_sal_3d.nc')
+    surf = ds.sel(depth=0).isel(time=0)
+    plot_on_map(surf, 'salinity', levels=np.linspace(30, 40, 20))
+    
+    # vertical profile
+    atlantic = ds.sel(lon=360-25, method='nearest').isel(time=0)
+    plot_section(atlantic, 'salinity')
+    
+
 def south_atlantic_salinity():
     S = xr.load_dataset('/Users/dklink/data_science/trashtracker/utils/get hycom/nc/S_2015_2.nc')
     S['lon'] = ((S.lon + 180) % 360) - 180
@@ -57,12 +77,23 @@ def NA_spd():
     plot_on_map(NA_spd, 'spd')
 
 
-def plot_on_map(ds, variable_name):
+def plot_on_map(ds, variable_name, levels=None):
     plt.figure()
-    ax = plt.axes(projection=ccrs.PlateCarree())
-    plt.contourf(ds.lon, ds.lat, ds[variable_name], transform=ccrs.PlateCarree())
+    ax = plt.axes(projection=ccrs.Mollweide())
+    plt.contourf(ds.lon, ds.lat, ds[variable_name], levels=levels, transform=ccrs.PlateCarree())
     cbar = plt.colorbar()
     cbar.ax.get_yaxis().labelpad = 15
     cbar.ax.set_ylabel(ds[variable_name].units, rotation=270)
     ax.coastlines()
     plt.show()
+    
+    
+def plot_section(ds, variable_name):
+    plt.figure()
+    plt.contourf(ds.lat, -ds.depth, ds[variable_name])
+    cbar = plt.colorbar()
+    cbar.ax.get_yaxis().labelpad = 15
+    cbar.ax.set_ylabel(ds[variable_name].units, rotation=270)
+    plt.title('lon = {}'.format(ds.lon.values))
+    plt.xlabel('latitude (deg)')
+    plt.ylabel('depth (m)')
