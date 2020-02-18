@@ -306,7 +306,7 @@ function figS2()
     subplot(2, 1, 2);
     plot(t/constants.seconds_per_day, rho);
     ylim([920, 1060]);
-    yline(mean(get_seawater_density(S_vs_z(z), T_vs_z(z), 0, 0, 0)));
+    %yline(mean(get_seawater_density(S(z), T(z), 0, 0, 0))); %broken
     xlabel('time (days)');
     ylabel('density (kg m^{-3})');
     xline(t(min_i)/constants.seconds_per_day, '--');
