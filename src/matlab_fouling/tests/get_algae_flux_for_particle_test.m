@@ -1,6 +1,6 @@
-%plot_vs_algae_count();  %shows collisions seed the fouling, but once algae has
+plot_vs_algae_count();  %shows collisions seed the fouling, but once algae has
                         %accumulated, growth/death dominates flux
-%plot_vs_light();
+plot_vs_light();
                         
 function plot_vs_algae_count()
     S = 35;  % normal S and T

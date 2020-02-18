@@ -4,6 +4,8 @@ function mu_sw = dynamic_viscosity_seawater (S, T)
 % S: salinity (g/kg)
 % T: temperature (Celsius)
 % return: dynamic viscosity of seawater (kg m^-1 s^-1)
+
+  S = S / 1000;  % we need kg / kg for this parameterization
   mu_w = 4.2844e-5 + (0.157 * (T + 64.993).^2 - 91.296).^-1;
   % mu_w: dynamic viscosity of water (kg m^-1 s^-1)
   
