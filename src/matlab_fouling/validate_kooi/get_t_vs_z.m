@@ -24,9 +24,9 @@ function [t, z, meta] = get_t_vs_z(num_days, dt_hours, particle)
     rho(1) = p.rho_tot;
     for i=2:length(t)
         I_surf = I_vs_time(t(i));
-        T_z = T_vs_z(p.z);
+        T_z = get_T(p.lon, p.lat, p.z, t);  % time not correct here
         I_z = get_light_at_z(p.z, I_surf, chl_ave_np);
-        S_z = get_S(t, p.lat, p.lon, p.z);
+        S_z = get_S(p.lon, p.lat, p.z, t);  % time not correct here
         chl_z = get_chl_at_z(p.z, chl_surf_np);
         
         dAdt = get_algae_flux_for_particle(p, S_z, T_z, chl_z, I_z);

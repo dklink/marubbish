@@ -1,8 +1,8 @@
 classdef Paths
     %PATHS contains locations of files on disk  
     properties (Constant)
-        base_path = '/Users/dklink/data_science/marubbish/biofouling_forcing_data/';
-        salinity = [Paths.base_path 'TS_2015_02.nc'];
+        salinity = '/Users/dklink/data_science/trashtracker/utils/get hycom/nc/TS_2015_02_2015_03.nc';
+        temperature = Paths.salinity;
     end
 end
 
