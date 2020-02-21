@@ -1,9 +1,9 @@
 disp("All Tests Passed")
 
 %plot_z_dependence();  
-%plot_chl_dependence();
+plot_chl_dependence();
 
-Robson_fig1();  % vertical scale is off by factor of 2, but this is within
+%Robson_fig1();  % vertical scale is off by factor of 2, but this is within
                     % reason considering I have no idea how close kooi's 
                     % noon surface irradiance is to Robson's.
 
@@ -22,7 +22,7 @@ function Robson_fig1()
 end
 
 function plot_z_dependence()
-    z = linspace(0, 50);
+    z = linspace(0, 200);
     chl_ave = kooi_constants.chl_ave_np;
     I_surf = kooi_constants.I_m;
     
@@ -39,21 +39,22 @@ function plot_z_dependence()
 end
 
 function plot_chl_dependence()
-    chl = logspace(log10(kooi_constants.chl_ave_np*1e-3), log10(kooi_constants.chl_ave_np*10000));  % kg m^-3
     I_surf = kooi_constants.I_m;
-    z = 0:10:50; %m
-    
+    legend();
+    z = linspace(0, 150);
+    chl = 1e-6*linspace(0, 10, 6); %kg m^-3, .001-60 typical ocean variation
+   
+    Z_eu = zeros(length(chl));
     figure; hold on;
-    for i=1:length(z)
-        I_z = get_light_at_z(z(i), I_surf, chl);
-        plot(chl*1e6, I_z, 'DisplayName', sprintf('z: %d m', z(i)));
+    for i=1:length(chl)
+        I_z = get_light_at_z(z, I_surf, chl(i));
+        plot(I_z, z, 'DisplayName', sprintf('chl: %.3f mg m^-3', chl(i)*1e6));
+        yl = yline(min(z(I_z < I_surf/100)));
+        set(get(get(yl,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
     end
-    xline(kooi_constants.chl_ave_np*1e6, 'DisplayName', 'chl ave north pacific');
-    yline(kooi_constants.I_m, 'DisplayName', 'surface light intensity at noon');
-    legend('Location', 'northwest');
-    xlabel('average chl a concentration (mg m^{-3})');
-    ylabel('light intensity (mol quanta m^{-2} s^{-1})');
-    set(gca, 'Yscale', 'log');
-    set(gca, 'Xscale', 'log');
-    
+    xline(I_surf/100, 'DisplayName', '1% surface light');
+    xlabel("light intensity (mol quanta m^{-2} s^{-1})");
+    ylabel("depth (m)");
+    set(gca, 'YDir','reverse')
+    legend('Location','southeast')
 end
