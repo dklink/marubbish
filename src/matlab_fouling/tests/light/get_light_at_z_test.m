@@ -1,7 +1,6 @@
 disp("All Tests Passed")
 
-%plot_z_dependence();  
-plot_chl_dependence();
+plot_z_and_chl_dependence();
 
 %Robson_fig1();  % vertical scale is off by factor of 2, but this is within
                     % reason considering I have no idea how close kooi's 
@@ -21,34 +20,18 @@ function Robson_fig1()
     ylabel('ave PAR (micro mol quanta m^{-2} s^{-1}');
 end
 
-function plot_z_dependence()
-    z = linspace(0, 200);
-    chl_ave = kooi_constants.chl_ave_np;
-    I_surf = kooi_constants.I_m;
-    
-    I_z = get_light_at_z(z, I_surf, chl_ave);
-    
-    figure;
-    plot(I_z, z);
-    xline(I_surf/100, 'DisplayName', '1% surface light');
-    yline(min(z(I_z < I_surf/100)), 'DisplayName', 'Euphotic Depth');
-    legend();
-    set(gca, 'YDir','reverse')
-    xlabel("light intensity (mol quanta m^{-2} s^{-1})");
-    ylabel("depth (m)");
-end
 
-function plot_chl_dependence()
+function plot_z_and_chl_dependence()
     I_surf = kooi_constants.I_m;
     legend();
     z = linspace(0, 150);
-    chl = 1e-6*linspace(0, 10, 6); %kg m^-3, .001-60 typical ocean variation
-   
+    chl = linspace(0, 10, 6); %mg m^-3, .001-60 typical ocean variation
+    
     Z_eu = zeros(length(chl));
     figure; hold on;
     for i=1:length(chl)
-        I_z = get_light_at_z(z, I_surf, chl(i));
-        plot(I_z, z, 'DisplayName', sprintf('chl: %.3f mg m^-3', chl(i)*1e6));
+        I_z = get_light_at_z(z, I_surf, get_chl_above_z_mixed(z, chl(i)));
+        plot(I_z, z, 'DisplayName', sprintf('chl: %.3f mg m^-3', chl(i)));
         yl = yline(min(z(I_z < I_surf/100)));
         set(get(get(yl,'Annotation'),'LegendInformation'),'IconDisplayStyle','off');
     end
