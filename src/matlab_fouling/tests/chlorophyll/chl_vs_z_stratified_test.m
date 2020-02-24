@@ -54,6 +54,7 @@ function plot_surface_concentration_spectrum()
         chl(:, i) = chl_vs_z_stratified(z, chl_surf(i));
     end
     chl(chl<1e-2) = 1e-2;
+    figure;
     contourf(chl_surf, z, chl, logspace(log10(1e-2), log10(10), 200), 'Linecolor', 'none');
     set(gca, 'xscale', 'log')
     set(gca,'colorscale','log')

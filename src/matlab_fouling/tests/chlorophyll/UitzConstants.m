@@ -4,6 +4,7 @@ classdef UitzConstants
     
     properties (Constant)
         ave_Z_eu_stratified = [119.1, 99.9, 91.0, 80.2, 70.3, 63.4, 54.4, 39.8, 26.1];  % m
+        ave_Z_eu_mixed = [77.1, 53.2, 44.0, 31.5, 16.9];  % m
         C_b_stratified = [0.4710    0.5330    0.4280    0.5700    0.6110    0.3900    0.5690    0.8350    0.1880];
         s_stratified = [0.1350    0.1720    0.1380    0.1730    0.2140    0.1090    0.1830    0.2980         0.05];  % important: the final parameter (.05) is inserted by me, better fit than the non-physical original (.00) in Uitz's original paper
         C_max_stratified = [1.5720    1.1940    1.0150    0.7660    0.6760    0.7880    0.6080    0.3820    0.8850];
