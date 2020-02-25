@@ -3,6 +3,25 @@
 %plot_map();
 %plot_seasons();
 %plot_hours();
+confirm_scale()  % their max: 400.  My max: 350.  Pretty good!
+
+function confirm_scale()
+    % Robert Frouin and Rachel T. Pinker (1995, figure 5)
+    %   data taken in 1987, julian day 223-227, in Kansas
+
+    kansas_lat = -38.5;
+    kansas_lon = -98.0;
+    time = datetime(1987, 1, 223, 0, 0, 0, 'TimeZone', 'America/Chicago'):hours(1):datetime(1987, 1, 227, 0, 0, 0, 0, 'TimeZone', 'America/Chicago');
+    
+    PAR = get_surface_PAR(kansas_lat, kansas_lon, time);
+
+    PAR_W_per_m_sq = PAR / 4.57;
+    figure; hold on;
+    plot(time, PAR_W_per_m_sq);
+    xlabel('lon (Deg E)');
+    ylabel('Irradiance at Surface (W m^{-2})');
+    title('Compare to Frouin and Pinker 1995 Fig 5');    
+end
 
 function plot_lat_dependence()
     lat = linspace(-90, 90, 100);
@@ -10,19 +29,19 @@ function plot_lat_dependence()
     NH_winter = datetime(2020, 12, 21, 12, 0, 0);
     SH_winter = datetime(2020, 6, 21, 12, 0, 0);
     
-    I_surf_NH = get_surface_irradiance(lat, lon, NH_winter);
-    I_surf_SH = get_surface_irradiance(lat, lon, SH_winter);
+    I_surf_NH = get_surface_PAR(lat, lon, NH_winter);
+    I_surf_SH = get_surface_PAR(lat, lon, SH_winter);
 
     figure
     plot(lat, I_surf_NH);
     xlabel('lat (Deg N)');
-    ylabel('Irradiance at Surface (W m^{-2})');
+    ylabel('Irradiance at Surface (micro mol quanta m^{-2} s^{-1})');
     title('Noon, Dec. 21');
     
     figure
     plot(lat, I_surf_SH);
     xlabel('lat (Deg N)');
-    ylabel('Irradiance at Surface (W m^{-2})');
+    ylabel('Irradiance at Surface (micro mol quanta m^{-2} s^{-1})');
     title('Noon, Jun. 21');
 end
 
@@ -32,14 +51,14 @@ function plot_lon_dependence()
     noon = datetime(2020, 3, 21, 12, 0, 0);
     six_pm = datetime(2020, 3, 21, 18, 0, 0);
 
-    I_noon = get_surface_irradiance(lat, lon, noon);
-    I_six_pm = get_surface_irradiance(lat, lon, six_pm);
+    I_noon = get_surface_PAR(lat, lon, noon);
+    I_six_pm = get_surface_PAR(lat, lon, six_pm);
 
     figure; hold on;
     plot(lon, I_noon, 'DisplayName', 'noon');
     plot(lon, I_six_pm, 'DisplayName', '6pm');
     xlabel('lon (Deg E)');
-    ylabel('Irradiance at Surface (W m^{-2})');
+    ylabel('Irradiance at Surface (micro mol quanta m^{-2} s^{-1})');
     title('Noon, march 21');
     legend
     
@@ -52,7 +71,7 @@ function plot_map()
     
     [LON, LAT] = meshgrid(lon, lat);
     
-    I_surf = get_surface_irradiance(LAT, LON, NH_winter);
+    I_surf = get_surface_PAR(LAT, LON, NH_winter);
 
     figure
     contour(LON, LAT, I_surf);
@@ -71,11 +90,11 @@ function plot_seasons()
     while true
         dt = datetime(2020, i, 21, 12, 0, 0);
 
-        I_surf_NH = get_surface_irradiance(LAT, LON, dt);
+        I_surf_NH = get_surface_PAR(LAT, LON, dt);
 
         contourf(LON, LAT, I_surf_NH);
         c = colorbar();
-        c.Label.String = 'surface irradiance (W m^{-2})';
+        c.Label.String = 'surface irradiance (micro mol quanta m^{-2} s^{-1})';
         xlabel('lon (deg E)');
         ylabel('lat (deg N)');
         title(sprintf('Noon, Month %d', i));
@@ -96,11 +115,11 @@ function plot_hours()
     while true
         dt = datetime(2020, 1, 1, i, 0, 0);
 
-        I_surf_NH = get_surface_irradiance(LAT, LON, dt);
+        I_surf_NH = get_surface_PAR(LAT, LON, dt);
 
         contourf(LON, LAT, I_surf_NH);
         c = colorbar();
-        c.Label.String = 'surface irradiance (W m^{-2})';
+        c.Label.String = 'surface irradiance (micro mol quanta m^{-2} s^{-1})';
         xlabel('lon (deg E)');
         ylabel('lat (deg N)');
         title(datestr(dt));

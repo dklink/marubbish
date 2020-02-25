@@ -1,10 +1,10 @@
-function I_surf = get_surface_irradiance(lat, lon, dt)
-%GET_SURFACE_IRRADIANCE get instantaneous surface irradiance using solar
+function PAR_surf = get_surface_PAR(lat, lon, dt)
+%GET_SURFACE_PAR get photosynthetically active radiation irradiance using solar
 % geometry.  Assumes no cloud cover.  Method from Khavrus & Shelevytsky 2012
 %   lat: latitude (Degrees N)
 %   lon: longitude (Degrees E)
 %   dt: date and time of query, UTC (matlab datetime object)
-%   returns: surface irradiance (W m^-2)
+%   returns: surface PAR (micro mol quanta m^-2 s^-1)
     alpha = deg2rad(23.45); % Earth's axial tilt (radians)
     phi = deg2rad(lat);
     I_max = 1360;  % ave solar irradiance outside atmosphere (W m^-2) (Khavrus 2012 near eq. 2)
@@ -30,5 +30,7 @@ function I_surf = get_surface_irradiance(lat, lon, dt)
         
     I_surf = I_max * I_GN .* z;  % eq. 5, I_GN replaces I_max
     
+    PAR_over_tot = .48; % typical PAR/total irradiance (Fig. 1, Baker, K.S. and R. Frouin. 1987)
+    micro_mol_quanta_per_m_sq_per_s_over_W_per_m_sq = 4.57; % 1 micro mol quanta m^-2 s^-1 : 1 W m^-2 for PAR (400-700nm light) (Table 3, sunlight, Thimijan and Heins 1983)
+    PAR_surf = I_surf * PAR_over_tot * micro_mol_quanta_per_m_sq_per_s_over_W_per_m_sq;  % convert total surface irradiance to PAR in units micro mol quanta m^-2 s^-1
 end
-
