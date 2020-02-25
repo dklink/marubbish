@@ -1,9 +1,8 @@
 %plot_lat_dependence();
 %plot_lon_dependence();
-%plot_map();
 %plot_seasons();
 %plot_hours();
-confirm_scale()  % their max: 400.  My max: 350.  Pretty good!
+%confirm_scale()  % their max: 400.  My max: 350.  Pretty good!
 
 function confirm_scale()
     % Robert Frouin and Rachel T. Pinker (1995, figure 5)
@@ -62,22 +61,6 @@ function plot_lon_dependence()
     title('Noon, march 21');
     legend
     
-end
-
-function plot_map()
-    lat = linspace(-90, 90, 100);
-    lon = linspace(-180, 180, 100);
-    NH_winter = datetime(2020, 12, 21, 12, 0, 0);
-    
-    [LON, LAT] = meshgrid(lon, lat);
-    
-    I_surf = get_surface_PAR(LAT, LON, NH_winter);
-
-    figure
-    contour(LON, LAT, I_surf);
-    xlabel('lon (deg E)');
-    ylabel('lat (deg N)');
-    title('Noon, Dec. 21'); 
 end
 
 function plot_seasons()
