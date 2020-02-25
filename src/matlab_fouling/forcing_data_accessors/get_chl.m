@@ -6,6 +6,7 @@ function chlorophyll = get_chl(seek_lon, seek_lat, seek_time)
 %   seek_lon: longitude (Deg E)
 %   seek_lat: latitude (Deg N)
 %   seek_time: time (Matlab datetime object)
+%   returns: surface chlorophyll concentration (mg m^-3)
     seek_time = hours(seek_time - datetime(2000, 01, 01, 00, 00, 00));  % convert to format stored in netcdf: hours since 2000-01-01T00:00:00
 
     seek_lon(seek_lon > 180) = seek_lon(seek_lon > 180)-360;  % adapt lon to range (-180, 180)
