@@ -8,8 +8,9 @@ function variable = index_hycom(dataset_path, variable_name, seek_lon, seek_lat,
 %   seek_lon: longitude (Deg E)
 %   seek_lat: latitude (Deg N)
 %   seek_z: depth (m, positive down)
-%   seek_time: time (hours since 2000-01-01 00:00:00)
+%   seek_time: time (Matlab datetime object)
     seek_lon = mod(seek_lon, 360);  % make negative lons positive
+    seek_time = hours(seek_time - datetime(2000, 01, 01, 00, 00, 00));  % convert to format stored in netcdf: hours since 2000-01-01T00:00:00
     
     ncid = dataset_path;
     lon = ncread(ncid, 'lon');
