@@ -8,7 +8,7 @@ function PAR_surf = get_surface_PAR(lat, lon, dt)
     alpha = deg2rad(23.45); % Earth's axial tilt (radians)
     phi = deg2rad(lat);
     I_max = 1360;  % ave solar irradiance outside atmosphere (W m^-2) (Khavrus 2012 near eq. 2)
-    T = day(dt, 'dayofyear') -  day(datetime(2020, 3, 20), 'dayofyear');
+    T = days(dt - datetime(year(dt), 3, 20));
         % date counted from spring equinox (20 Mar)
     dt_local = dt + days(1) * lon/360; % convert to local solar time
                                         % (assuming UTC ~ GMT solar time)

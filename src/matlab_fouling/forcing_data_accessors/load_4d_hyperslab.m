@@ -35,7 +35,7 @@ function slab = load_4d_hyperslab(dataset_path, variable_name, lon_range, lat_ra
     lat = lat(lat_idx(1):lat_idx(2));
     z = z(z_idx(1):z_idx(2));
     time = time(time_idx(1):time_idx(2));
-    time = datetime(datestr(time/24 + datenum('2000-01-01')));  % convert to datetime
+    time = time/24 + datenum('2000-01-01');  % convert to matlab datenum (days since year 0)
     
     slab = Hyperslab(lon, lat, z, time, data);
 end

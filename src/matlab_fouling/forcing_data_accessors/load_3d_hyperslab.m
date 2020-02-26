@@ -30,7 +30,7 @@ function slab = load_3d_hyperslab(dataset_path, variable_name, lon_range, lat_ra
     lat = lat(lat_idx(1):lat_idx(2));
     z = 0;
     time = time(time_idx(1):time_idx(2));
-    time = datetime(datestr(time/24 + datenum('2000-01-01')));  % convert to datetime
+    time = time/24 + datenum('2000-01-01');  % convert to matlab datenum (days since year 0)
     data = reshape(data, [length(lon), length(lat), 1, length(time)]);  % add singleton z dimension
     
     slab = Hyperslab(lon, lat, z, time, data);

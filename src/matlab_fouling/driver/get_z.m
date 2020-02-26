@@ -17,18 +17,19 @@ function z = get_z(t, p)
     S = load_4d_hyperslab(Paths.salinity, 'salinity', lon_range, lat_range, z_range, t_range);
     T = load_4d_hyperslab(Paths.temperature, 'water_temp', lon_range, lat_range, z_range, t_range);
     CHL = load_3d_hyperslab(Paths.chlorophyll, 'chlor_a', lon_range, lat_range, t_range);
+    PAR_SURF = get_surface_PAR(p.lat, p.lon, t);
     
-    
+    t_num = datenum(t);  % numeric time operations much faster
     for i=1:length(t)-1
         z(i) = p.z;  % record particle's location, m
 
-        S_z = S.select(p.lon, p.lat, p.z, t(i)); % g / kg
-        T_z = T.select(p.lon, p.lat, p.z, t(i)); % celsius
+        S_z = S.select(p.lon, p.lat, p.z, t_num(i)); % g / kg
+        T_z = T.select(p.lon, p.lat, p.z, t_num(i)); % celsius
         
-        chl_surf = CHL.select(p.lon, p.lat, 0, t(i));  % mg m^-3
+        chl_surf = CHL.select(p.lon, p.lat, 0, t_num(i));  % mg m^-3
         chl_z = chl_vs_z_mixed(p.z, chl_surf);  % mg m^-3
         
-        I_surf = get_surface_PAR(p.lat, p.lon, t(i));   % micro mol quanta m^-2 s^-1
+        I_surf = PAR_SURF(i);   % micro mol quanta m^-2 s^-1
         chl_tot = get_chl_above_z_mixed(p.z, chl_surf); % mg m^-2
         I_z = get_light_at_z(p.z, I_surf, chl_tot);     % 
 
@@ -42,4 +43,5 @@ function z = get_z(t, p)
             p.z = 0;
         end
     end
+    z(end) = p.z;
 end

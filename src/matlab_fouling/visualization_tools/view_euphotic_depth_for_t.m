@@ -9,7 +9,7 @@ function z = view_euphotic_depth_for_t(t, lat, lon)
     CHL = load_3d_hyperslab(Paths.chlorophyll, 'chlor_a', [lon, lon], [lat, lat], [t(1), t(end)]);
     z = zeros(1, length(t));
     for i=1:length(t)
-        z(i) = find_euphotic_depth(I_surf(i), CHL.select(lon, lat, 0, t(i)), I_surf_mean);
+        z(i) = find_euphotic_depth(I_surf(i), CHL.select(lon, lat, 0, datenum(t(i))), I_surf_mean);
     end
     figure;
     plot(t, z);
@@ -21,7 +21,7 @@ function z = find_euphotic_depth(I_surf, chl_surf, I_surf_mean)
     if I_surf <= .01*I_surf_mean
         z = 0;
     else
-        z = fzero(@I_z_minus_one_percent, 0); 
+        z = fzero(@I_z_minus_one_percent, 50);
     end
     function ret = I_z_minus_one_percent(z)
         % for finding euphotic depth
