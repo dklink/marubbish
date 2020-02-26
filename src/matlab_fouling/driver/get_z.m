@@ -17,6 +17,9 @@ function z = get_z(t, p)
     S = load_4d_hyperslab(Paths.salinity, 'salinity', lon_range, lat_range, z_range, t_range);
     T = load_4d_hyperslab(Paths.temperature, 'water_temp', lon_range, lat_range, z_range, t_range);
     CHL = load_3d_hyperslab(Paths.chlorophyll, 'chlor_a', lon_range, lat_range, t_range);
+    CHL.data = mean(CHL.data, 4, 'omitnan');
+    CHL.time = CHL.time(1);  % for now, let's use a yearly average, to smooth nans
+
     PAR_SURF = get_surface_PAR(p.lat, p.lon, t);
     
     t_num = datenum(t);  % numeric time operations much faster

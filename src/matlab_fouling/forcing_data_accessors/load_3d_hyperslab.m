@@ -1,17 +1,16 @@
 function slab = load_3d_hyperslab(dataset_path, variable_name, lon_range, lat_range, time_range)
 %LOAD_HYPERSLAB extracts a hyperslab of the provided variable from the
 %               provided netcdf dataset, given ranges of lon, lat, and time
-%               This method is for surface data; will place z=0 in final slab.
+%               This function is for chlorophyll surface data; will place z=0 in final slab.
 %       the range variables are of form [min_value, max_value]
 %       The ranges will be matched to the nearest values along each dimension
 %   dataset_path: absolute path to a netcdf dataset with dimensions (lon, lat, time)
 %   variable_name: name of the variable to extract
-%   lon_range: min/max longitude (Deg E)
-%   lat_range: min/max latitude (Deg N)
+%   lon_range: min/max longitude (Deg E, -180 to 180)
+%   lat_range: min/max latitude (Deg N, 90 to -90)
 %   time_range: min/max time (Matlab datetime object)
 %   returns: a hyperslab object
 
-    lon_range = mod(lon_range, 360);  % make negative lons positive
     time_range = hours(time_range - datetime(2000, 01, 01, 00, 00, 00));  % convert to format stored in netcdf: hours since 2000-01-01T00:00:00
     
     ncid = dataset_path;
