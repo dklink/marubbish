@@ -13,10 +13,14 @@ function [z, meta] = get_z(t, p)
     z_range = [0, 1e9];  % inf doesn't work
     t_range = [t(1), t(end)];
     S = load_4d_hyperslab(Paths.salinity, 'salinity', lon_range, lat_range, z_range, t_range);
+    S.data = mean(S.data, 4, 'omitnan');
+    S.time = S.time(1);
     T = load_4d_hyperslab(Paths.temperature, 'water_temp', lon_range, lat_range, z_range, t_range);
+    T.data = mean(T.data, 4, 'omitnan');
+    T.time = T.time(1);
     CHL = load_3d_hyperslab(Paths.chlorophyll, 'chlor_a', lon_range, lat_range, t_range);
     CHL.data = mean(CHL.data, 4, 'omitnan');
-    CHL.time = CHL.time(1);  % for now, let's use a yearly average, to smooth nans
+    CHL.time = CHL.time(1);  % for now, let's just use yearly averages, to smooth nans
     
     PAR_SURF = get_surface_PAR(p.lat, p.lon, t);
     
@@ -29,9 +33,9 @@ function [z, meta] = get_z(t, p)
         S_z = S.select(p.lon, p.lat, p.z, t_num(i)); % g / kg
         T_z = T.select(p.lon, p.lat, p.z, t_num(i)); % celsius
         chl_surf = CHL.select(p.lon, p.lat, 0, t_num(i));  % mg m^-3
-        chl_z = chl_vs_z_mixed(p.z, chl_surf);  % mg m^-3
+        chl_z = chl_vs_z_stratified(p.z, chl_surf);  % mg m^-3
         I_surf = PAR_SURF(i);   % micro mol quanta m^-2 s^-1
-        chl_tot = get_chl_above_z_mixed(p.z, chl_surf, chl_z); % mg m^-2
+        chl_tot = get_chl_above_z_stratified(p.z, chl_surf); % mg m^-2
         I_z = get_light_at_z(p.z, I_surf, chl_tot);     % light at particle
 
         % record starting position at this timestep
@@ -44,7 +48,7 @@ function [z, meta] = get_z(t, p)
         dAdt = get_algae_flux_for_particle(p, S_z, T_z, chl_z, I_z);
         p.update_particle_for_growth(dAdt * dt);
 
-        % this approximates the position function, possibly poorly
+        % this approximates the position function using Euler method
         p.V_s = get_settling_velocity(p, S_z, T_z);
         p.z = p.z + p.V_s * dt;
         if p.z < 0  % constrain to surface

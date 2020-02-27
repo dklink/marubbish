@@ -1,9 +1,7 @@
 t = datetime(2015, 1, 1, 0, 0, 0):hours(.25*pi):datetime(2020, 1, 1, 0, 0, 0);
-lat = constants.NP_lat;
-%lat = -47.279229;
-lon = constants.NP_lon;
-%lon = -61.171875;
-%[lat, lon] = click_for_coordinates();
+%lat = constants.NP_lat;
+%lon = constants.NP_lon;
+[lat, lon] = click_for_coordinates();
 r_pl = 1e-3 * .1;%input('Input a particle radius (mm): ');
 p = Particle(r_pl, kooi_constants.rho_LDPE, 0, lat, lon, 0);
 
@@ -25,6 +23,7 @@ I_z = meta(:, 4);
 disp('Model run complete.  Beginning plotting...');
 
 disp('Plotting particle properties vs time...');
+figure;
 subplot(3, 1, 1); hold on;
 plot(t, z);
 set(gca, 'ydir', 'reverse');
