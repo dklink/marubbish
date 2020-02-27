@@ -31,7 +31,7 @@ function [z, meta] = get_z(t, p)
         chl_surf = CHL.select(p.lon, p.lat, 0, t_num(i));  % mg m^-3
         chl_z = chl_vs_z_mixed(p.z, chl_surf);  % mg m^-3
         I_surf = PAR_SURF(i);   % micro mol quanta m^-2 s^-1
-        chl_tot = get_chl_above_z_mixed(p.z, chl_surf); % mg m^-2
+        chl_tot = get_chl_above_z_mixed(p.z, chl_surf, chl_z); % mg m^-2
         I_z = get_light_at_z(p.z, I_surf, chl_tot);     % light at particle
 
         % record starting position at this timestep
@@ -42,11 +42,11 @@ function [z, meta] = get_z(t, p)
         meta(i, 4) = I_z;  % light intensity at particle
 
         dAdt = get_algae_flux_for_particle(p, S_z, T_z, chl_z, I_z);
-        p.A = p.A + dAdt * dt;
+        p.update_particle_for_growth(dAdt * dt);
 
         % this approximates the position function, possibly poorly
-        V_s = get_settling_velocity(p, S_z, T_z);
-        p.z = p.z + V_s * dt;
+        p.V_s = get_settling_velocity(p, S_z, T_z);
+        p.z = p.z + p.V_s * dt;
         if p.z < 0  % constrain to surface
             p.z = 0;
         end

@@ -1,9 +1,9 @@
 t = datetime(2015, 1, 1, 0, 0, 0):hours(.25*pi):datetime(2020, 1, 1, 0, 0, 0);
-%lat = constants.NP_lat;
+lat = constants.NP_lat;
 %lat = -47.279229;
-%lon = constants.NP_lon;
+lon = constants.NP_lon;
 %lon = -61.171875;
-[lat, lon] = click_for_coordinates();
+%[lat, lon] = click_for_coordinates();
 r_pl = 1e-3 * .1;%input('Input a particle radius (mm): ');
 p = Particle(r_pl, kooi_constants.rho_LDPE, 0, lat, lon, 0);
 

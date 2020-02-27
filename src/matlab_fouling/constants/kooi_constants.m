@@ -4,6 +4,7 @@ classdef kooi_constants
         % ALGAE PROPERTIES
         
         V_A = 2e-16; % volume of individual algae particle (m^3)
+        r_A = nthroot(3 / (4*pi) * kooi_constants.V_A, 3);
         gamma = 1.7e5 / constants.seconds_per_day; % shear rate (s^-1)
         carbon_per_algae = 2726 * 1e-9; % mass carbon per algal cell (mg carbon (algal cell)^-1)
         m_A = .39 / constants.seconds_per_day;  % mortality rate (s^-1)
@@ -23,10 +24,5 @@ classdef kooi_constants
         rho_PP = 840;   % density of polypropylene (kg m^-3)
         rho_PS = 1050; % density of Polystyrene (kg m^-3)
         rho_PVC = 1380; % density of Polyvinylchloride
-    end
-    methods (Static)
-        function radius = r_A ()
-            radius = nthroot(3 / (4*pi) * kooi_constants.V_A, 3);  % radius of individual algal particle (m)
-        end
     end
 end
