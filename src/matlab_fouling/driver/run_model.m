@@ -1,9 +1,12 @@
-t = datetime(2015, 1, 1, 0, 0, 0):hours(.25*pi):datetime(2020, 1, 1, 0, 0, 0);
-%lat = constants.NP_lat;
-%lon = constants.NP_lon;
+% startup parameters
+t = datetime(2015, 1, 1, 0, 0, 0):hours(.25*pi):datetime(2016, 1, 1, 0, 0, 0);
+r_pl = 50 * 1e-3;  % m
+rho_pl = kooi_constants.rho_HDPE;
+do_growth_balance_analysis = false;
+show_daily_euphotic_depth = false;
+
 [lat, lon] = click_for_coordinates();
-r_pl = 1e-3 * .1;%input('Input a particle radius (mm): ');
-p = Particle(r_pl, kooi_constants.rho_LDPE, 0, lat, lon, 0);
+p = Particle(r_pl, rho_pl, 0, lat, lon, 0);
 
 disp('Input parameters:');
 fprintf('[lat, lon] = [%.3f, %.3f]\n', lat, lon);
@@ -23,9 +26,9 @@ I_z = meta(:, 4);
 disp('Model run complete.  Beginning plotting...');
 
 disp('Plotting particle properties vs time...');
-figure;
+figure(1);
 subplot(3, 1, 1); hold on;
-plot(t, z);
+plot(t, z, 'DisplayName', 'particle track');
 set(gca, 'ydir', 'reverse');
 ylabel('depth (m)');
 title(sprintf('LDPE, radius %.04g mm', r_pl*1000));
@@ -42,24 +45,33 @@ disp('Plotting forcing data vs time...');
 figure;
 subplot(2, 1, 1)
 plot(t, T_z);
-ylabel('temperature at particle (deg C)');disp('Plotting forcing data vs time...');
+ylabel('T(p.z) (deg C)');
 
 subplot(2, 1, 2)
 plot(t, I_z);
-ylabel('PAR intensity at particle (micro mol quanta m^-2 s^-1)');
+ylabel('I(p.z) (micro mol quanta m^-2 s^-1)');
 
-
-%{
-disp('Overlaying daily mean euphotic depth vs time...');
-
-z_eu = view_euphotic_depth_for_t(t, p.lat, p.lon);
-days = t(1):hours(24):t(end);
-daily_mean_zeu = zeros(1, length(days)-1);
-for i=1:length(daily_zeu)
-    daily_mean_zeu(i) = mean(z_eu((t > days(i)) & (t < days(i+1))));
+if do_growth_balance_analysis
+    disp('Beginning growth balance analysis...');
+    [daily_t, z_balance] = get_growth_balance_depth(p, t(1), t(end));
+    figure(1);
+    subplot(3, 1, 1); hold on;
+    plot(daily_t, z_balance, 'DisplayName', 'depth of growth balance');
+    legend();
 end
 
-subplot(1, 2, 1);
-plot(days(1:end-1), daily_mean_zeu);
-legend('particle depth','daily mean euphotic depth')
-%}
+
+if show_daily_euphotic_depth
+    disp('Overlaying daily mean euphotic depth vs time...');
+
+    z_eu = view_euphotic_depth_for_t(t, p.lat, p.lon);
+    days = t(1):hours(24):t(end);
+    daily_mean_zeu = zeros(1, length(days)-1);
+    for i=1:length(daily_zeu)
+        daily_mean_zeu(i) = mean(z_eu((t > days(i)) & (t < days(i+1))));
+    end
+
+    subplot(1, 2, 1);
+    plot(days(1:end-1), daily_mean_zeu);
+    legend('particle depth','daily mean euphotic depth')
+end

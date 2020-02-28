@@ -64,5 +64,13 @@ classdef Particle < handle
             obj.r_tot = new_r_tot;
             obj.rho_tot = new_rho_tot;
         end
+        function update_particle_from_rho_tot(obj, rho_tot)
+            % update all the relevant particle params given its total
+            % density
+            V_bf = obj.V_pl * (rho_tot - obj.rho_pl) / (obj.rho_bf - rho_tot);
+            obj.A = V_bf / (kooi_constants.V_A * obj.theta_pl);
+            obj.calculate_derivative_properties();
+            assert_equal(obj.rho_tot, rho_tot);  % make sure it worked out
+        end
     end
 end
