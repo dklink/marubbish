@@ -1,7 +1,8 @@
 % startup parameters
-t = datetime(2015, 1, 1, 0, 0, 0):hours(.25*pi):datetime(2016, 1, 1, 0, 0, 0);
-r_pl = 50 * 1e-3;  % m
-rho_pl = kooi_constants.rho_HDPE;
+t = datetime(2015, 1, 1, 0, 0, 0):hours(.25*pi):datetime(2017, 1, 1, 0, 0, 0);
+r_pl = .1 * 1e-3;  % m
+rho_pl = kooi_constants.rho_PP;
+type = PlasticType.PP;
 do_growth_balance_analysis = false;
 show_daily_euphotic_depth = false;
 
@@ -19,6 +20,10 @@ disp(['Surface Chlorophyll forcing: ' Paths.chlorophyll]);
 
 disp('Beginning model run...');
 [z, meta] = get_z(t, p);
+if isnan(z)
+    disp('Simulation failed: surface forcing data undefined.');
+    return;
+end
 rho = meta(:, 1);
 r = meta(:, 2);
 T_z = meta(:, 3);
@@ -31,7 +36,7 @@ subplot(3, 1, 1); hold on;
 plot(t, z, 'DisplayName', 'particle track');
 set(gca, 'ydir', 'reverse');
 ylabel('depth (m)');
-title(sprintf('LDPE, radius %.04g mm', r_pl*1000));
+title(sprintf('%s, radius %.04g mm', type, r_pl*1000));
 
 subplot(3, 1, 2);
 plot(t, rho);

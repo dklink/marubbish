@@ -5,6 +5,7 @@ function [z, meta] = get_z(t, p)
     % returns: [z, meta], length n
     %       z: depth (m)
     %       meta: [rho_tot (kg m^-3), r_tot (m), I_z (micro mol quanta m^-2 s^-1)]
+    %   if surface forcing data is undefined for any t at particle's lat/lon, exits and returns nan. 
     % load the forcing to start with
     % no changes in lat/lon
     % let's load time/depth slices
@@ -33,6 +34,14 @@ function [z, meta] = get_z(t, p)
         S_z = S.select(p.lon, p.lat, p.z, t_num(i)); % g / kg
         T_z = T.select(p.lon, p.lat, p.z, t_num(i)); % celsius
         chl_surf = CHL.select(p.lon, p.lat, 0, t_num(i));  % mg m^-3
+        
+        % exit if forcing data undefined
+        if isnan(S_z) || isnan(T_z) || isnan(chl_surf)
+            z = nan;
+            meta = nan;
+            return;
+        end
+        
         chl_z = chl_vs_z_stratified(p.z, chl_surf);  % mg m^-3
         I_surf = PAR_SURF(i);   % micro mol quanta m^-2 s^-1
         chl_tot = get_chl_above_z_stratified(p.z, chl_surf); % mg m^-2
