@@ -1,9 +1,10 @@
-function view_world_light_at_location(lat, lon, time)
+function view_world_light_at_location(time)
 %VIEW_WORLD_LIGHT_AT_LOCATION make a map of the world's light state
 %   at a given time; mark the lat and lon provided
 %   lat: latitude (degrees N)
 %   lon: longitude (degrees E)
 %   time: moment in time (matlab datetime object)
+    [lat, lon] = click_for_coordinates();
     grid_lat = linspace(-90, 90, 100);
     grid_lon = linspace(-180, 180, 100);
     [LON, LAT] = meshgrid(grid_lon, grid_lat);
@@ -17,7 +18,7 @@ function view_world_light_at_location(lat, lon, time)
     contourf(proj_LON, proj_LAT, I_surf);
     colorbar();
     plot(proj_lon, proj_lat, 'rp', 'MarkerSize', 15, 'MarkerFaceColor', 'r');
-    m_coast();
+    m_coast('LineWidth', 1);
     m_grid();
     xlabel('lon (deg E)');
     ylabel('lat (deg N)');

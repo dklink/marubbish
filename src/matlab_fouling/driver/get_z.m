@@ -2,6 +2,7 @@ function [z, meta] = get_z(t, p)
     % simulate vertical movement for a plastic particle
     % t: equally spaced datetime vector, length n
     % p: particle with scalar fields
+    % mortality_rate: optional, provides the grazing mortality rate in s^-1
     % returns: [z, meta], length n
     %       z: depth (m)
     %       meta: [rho_tot (kg m^-3), r_tot (m), I_z (micro mol quanta m^-2 s^-1)]
