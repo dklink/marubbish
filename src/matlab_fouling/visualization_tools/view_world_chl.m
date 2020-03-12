@@ -11,11 +11,10 @@ function [lat, lon, data] = view_world_chl(lat_range, lon_range, t_range, horiz_
     lat = lat(1:vert_stride:end);
     lon = lon(1:horiz_stride:end);
     data = data(1:horiz_stride:end, 1:vert_stride:end);
-    
     [LAT, LON] = meshgrid(lat, lon);
         
     f = figure; hold on;
-    m_proj('miller');
+    m_proj('miller', 'lon', 180);
     [proj_LON, proj_LAT] = m_ll2xy(LON, LAT);
     [~, h] = contourf(proj_LON, proj_LAT, log(data));
     colormap(f, 'winter');

@@ -6,7 +6,7 @@ function slab = load_3d_hyperslab(dataset_path, variable_name, lon_range, lat_ra
 %       The ranges will be matched to the nearest values along each dimension
 %   dataset_path: absolute path to a netcdf dataset with dimensions (lon, lat, time)
 %   variable_name: name of the variable to extract
-%   lon_range: min/max longitude (Deg E, -180 to 180)
+%   lon_range: min/max longitude (Deg E, 0 to 360)
 %   lat_range: min/max latitude (Deg N, 90 to -90)
 %   time_range: min/max time (Matlab datetime object)
 %   returns: a hyperslab object
